@@ -1,0 +1,32 @@
+﻿@model List<Aplikacja.Entities.JobModel.Job>
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<h1>User</h1>
+
+<table class="table table-bordered table-striped" style="width:100%">
+    <thead>
+        <tr>
+            <th>
+                Users
+            </th>
+            <th>
+                Users
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var obj in Model)
+        {
+            <tr>
+                <td width="50%">
+                    @obj.Client
+                <td width="30%">
+                    @obj.ProjectName
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+

@@ -1,0 +1,33 @@
+version: '3.4'
+
+services:
+  aplikacja:
+    image: ${DOCKER_REGISTRY-}aplikacja
+    build:
+      context: .
+      dockerfile: Aplikacja/Dockerfile
+    networks:
+      - my-network
+    depends_on:
+      - db
+
+  db:
+    image: "mcr.microsoft.com/mssql/server:2022-latest"
+    ports:
+      - "1433:1433"
+    environment:
+      MSSQL_SA_PASSWORD: "S3cur3P@ssW0rd!"
+      ACCEPT_EULA: "Y"
+    networks:
+      - my-network
+
+  redis:
+    image: 'bitnami/redis:latest'
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    networks:
+      - my-network
+
+networks:
+  my-network:
+    external: true
