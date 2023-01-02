@@ -1,13 +1,14 @@
 ﻿
 
 using Aplikacja.Entities.JobModel;
+using Aplikacja.Entities.UserModel;
 using Microsoft.EntityFrameworkCore;
 
 namespace Aplikacja.Models
 {
     public class ApplicationDbContext : DbContext
     {
-       // public DbSet<User> Users { get; set; }
+       public DbSet<User> Users { get; set; }
         public DbSet<Job> Jobs { get; set; }
         //public DbSet<Inbox> Inboxs { get; set; }
         //public DbSet<InboxItem> InboxItems { get; set; }
@@ -24,7 +25,7 @@ namespace Aplikacja.Models
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-           //modelBuilder.ApplyConfigurationsFromAssembly(typeof(UserConfiguration).Assembly);
+            modelBuilder.ApplyConfigurationsFromAssembly(typeof(UserConfiguration).Assembly);
             new DbInitializer(modelBuilder).Seed();
         }
 

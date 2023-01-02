@@ -1,0 +1,92 @@
+﻿@model Aplikacja.Entities.JobModel.Job
+
+@{
+    ViewData["Title"] = "Create task";
+}
+
+<div class="row">
+    <h1>Create or Edit</h1>
+    <form method="post" action="CreateOrEdit">
+
+        <div class="form-group">
+            <label for="exampleInputEmail1">Received</label>
+            <input type="text" class="form-control" placeholder="Received..." asp-for="Received">
+        </div>
+        <div class="form-group">
+            <label for="exampleInputEmail1">Due date</label>
+            <input type="text" class="form-control" placeholder="Due date..." asp-for="DueDate">
+        </div>
+        <div class="form-group">
+            <label for="exampleInputEmail1">Started</label>
+            <input type="text" class="form-control" placeholder="Started..." asp-for="Started">
+        </div>
+        <div class="form-group">
+            <label for="exampleInputEmail1">Finished</label>
+            <input type="text" class="form-control" placeholder="Finished..." asp-for="Finished">
+        </div>
+        <div class="form-group">
+            <label for="exampleInputEmail1">Status</label>
+            <input type="text" class="form-control" placeholder="Status..." asp-for="Status">
+        </div>
+        <label for="exampleInputEmail1">Task type</label>
+        <div class="form-group">
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
+                <label class="form-check-label" for="inlineCheckbox1" asp-for="Type">2D </label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" id="inlineCheckbox2" value="option2">
+                <label class="form-check-label" for="inlineCheckbox2" asp-for="Type">3D</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" id="inlineCheckbox3" value="option3">
+                <label class="form-check-label" for="inlineCheckbox3" asp-for="Type">2D/3D</label>
+            </div>
+        </div>
+        <label for="exampleInputEmail1">System</label>
+        <div class="form-group">
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
+                <label class="form-check-label" for="inlineCheckbox1" asp-for="System">Catia </label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" id="inlineCheckbox2" value="option2">
+                <label class="form-check-label" for="inlineCheckbox2" asp-for="System">NX</label>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="exampleInputEmail1">Job Description</label>
+            <input type="text" class="form-control" placeholder="Description..." asp-for="JobDescription">
+        </div>
+        <div class="form-group">
+            <label for="exampleInputEmail1">Engineer</label>
+            <input type="text" class="form-control" placeholder="Engineer..." asp-for="Engineer">
+        </div>
+        <div class="form-group">
+            <label for="exampleInputEmail1">Ecm</label>
+            <input type="text" class="form-control" placeholder="Ecm..." asp-for="Ecm">
+        </div>
+        <div class="form-group">
+            <label for="exampleInputEmail1">Gpdm</label>
+            <input type="text" class="form-control" placeholder="Gpdm..." asp-for="Gpdm">
+        </div>
+        <div class="form-group">
+            <label for="exampleInputEmail1">Project Number</label>
+            <input type="text" class="form-control" placeholder="Project number..." asp-for="ProjectNumber">
+        </div>
+        <div class="form-group">
+            <label for="exampleInputEmail1">Client</label>
+            <input type="text" class="form-control" placeholder="Client..." asp-for="Client">
+        </div>
+        <div class="form-group">
+            <label for="exampleInputEmail1">Project Name</label>
+            <input type="text" class="form-control" placeholder="Project name..." asp-for="ProjectName">
+        </div>
+
+
+        
+
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+</div>

@@ -12,8 +12,8 @@ namespace Aplikacja.Repositories.JobRepository
 
         //public Task<bool> CreateInboxItem(int jobId, int userId);
 
-        public Task<Job> CreateJob(CreateJobDto command);
+        public Task<Job> CreateJob(Job command);
         public Task<bool> DeleteJob(int jobId);
-        public Task<Job> UpdateJob(UpdateJobDto command,int jobId);
+        public Task<Job> UpdateJob(Job command,int jobId);
     }
 }

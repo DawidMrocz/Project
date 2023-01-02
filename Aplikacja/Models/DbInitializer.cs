@@ -1,6 +1,7 @@
 ﻿
 
 using Aplikacja.Entities.JobModel;
+using Aplikacja.Entities.UserModel;
 using Microsoft.EntityFrameworkCore;
 
 namespace Aplikacja.Models
@@ -64,6 +65,30 @@ namespace Aplikacja.Models
                     ProjectName = "sap text",
                     Status = "2D",
                     Received = "20.11.2022",
+                }
+            );
+            modelBuilder.Entity<User>().HasData(
+                new User
+                {
+                    UserId = 1,
+                    Name = "Dawid",
+                    PasswordHash = "zxcasdqwe",
+                    Email = "dawid@tlen.pl",
+                    CCtr = "RS8531",
+                    ActTyp = "L8531",
+                    Role = "Admin",
+                    Photo = "zdjecie"
+                },
+                new User
+                {
+                    UserId = 2,
+                    Name = "Dawid2",
+                    PasswordHash = "zxcasdqwe",
+                    Email = "dawid2@tlen.pl",
+                    CCtr = "RS8531",
+                    ActTyp = "L8531",
+                    Role = "Manager",
+                    Photo = "zdjecie"
                 }
             );
         }

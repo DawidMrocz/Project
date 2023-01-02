@@ -50,7 +50,7 @@ namespace Aplikacja.Repositories.JobRepository
             return await _context.Jobs.SingleAsync(r => r.JobId == jobId);
         }
 
-        public async Task<Job> CreateJob(CreateJobDto command)
+        public async Task<Job> CreateJob(Job command)
         {
 
             var newJob = new Job()
@@ -83,7 +83,7 @@ namespace Aplikacja.Repositories.JobRepository
             return true;
         }
 
-        public async Task<Job> UpdateJob(UpdateJobDto updatedJob,int jobId)
+        public async Task<Job> UpdateJob(Job updatedJob,int jobId)
         {
             var currentTask = await _context.Jobs.SingleAsync(r => r.JobId == jobId);
 

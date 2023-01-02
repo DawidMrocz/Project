@@ -3,16 +3,37 @@
     ViewData["Title"] = "Home Page";
 }
 
-<h1>User</h1>
+<h1>List of Tasks</h1>
 
 <table class="table table-bordered table-striped" style="width:100%">
     <thead>
         <tr>
             <th>
-                Users
+                Received
             </th>
             <th>
-                Users
+                Due date
+            </th>
+            <th>
+                Started
+            </th>
+            <th>
+                Finished
+            </th>
+            <th>
+                Status
+            </th>
+            <th>
+                Type
+            </th>
+            <th>
+                System
+            </th>
+            <th>
+                Description
+            </th>
+            <th>
+               Enigineer
             </th>
         </tr>
     </thead>
@@ -20,10 +41,24 @@
         @foreach (var obj in Model)
         {
             <tr>
-                <td width="50%">
-                    @obj.Client
-                <td width="30%">
-                    @obj.ProjectName
+                <td width="6%"> @obj.Received</td>
+                <td width="6%">@obj.DueDate</td>
+                <td width="6%"> @obj.Started</td>
+                <td width="6%">@obj.Finished</td>
+                <td width="4%"> @obj.Status</td>
+                <td width="4%">@obj.Type</td>
+                <td width="10%"> @obj.System</td>
+                <td width="10%">@obj.JobDescription</td>
+                <td width="10%"> @obj.Engineer</td>
+@*                <td width="10%">@obj.ProjectName</td>
+                <td width="10%"> @obj.Client</td>
+                <td width="10%">@obj.ProjectName</td>*@
+                
+                
+                <td>
+                    <a asp-action="CreateOrEdit" asp-route-id="@obj.JobId">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@obj.JobId">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@obj.JobId">Delete</a>
                 </td>
             </tr>
         }
