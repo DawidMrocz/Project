@@ -5,9 +5,10 @@ namespace Aplikacja.Repositories.UserRepository
 {
     public interface IUserRepository
     {
+        public Task<List<UserDto>> GetUsers();
         public Task<UserDto> GetProfile(int userId);
 
-        public Task<String> LoginUser(LoginDto command);
+        public Task<bool> LoginUser(LoginDto command);
         public Task<String> ForgotPassword();
         public Task<String> ChangePassword();
         public Task<String> ChangeRole();

@@ -3,65 +3,117 @@
     ViewData["Title"] = "Home Page";
 }
 
+<head>
+    <link rel="stylesheet" href="~/css/Index.css" asp-append-version="true" />
+</head>
+
 <h1>List of Tasks</h1>
 
-<table class="table table-bordered table-striped" style="width:100%">
-    <thead>
-        <tr>
-            <th>
-                Received
-            </th>
-            <th>
-                Due date
-            </th>
-            <th>
-                Started
-            </th>
-            <th>
-                Finished
-            </th>
-            <th>
-                Status
-            </th>
-            <th>
-                Type
-            </th>
-            <th>
-                System
-            </th>
-            <th>
-                Description
-            </th>
-            <th>
-               Enigineer
-            </th>
-        </tr>
-    </thead>
-    <tbody>
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+    Nowe zadanie
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="post" asp-action="Create" asp-controller="Home">
+                    <div class="InboxListCard">
+                        <input type="text" class="form-control" name="JobDescription">
+                       @* <div class="InboxListCardStatus">Status  <input type="text" value="@obj.Job.Status" class="form-control" name="Status"></div>
+                        <div class="InboxListCardStatus">Entry date  <input type="text" class="form-control" name="entryDate"></div>
+                        <div class="InboxListCardInfos">
+                            <div>@obj.Job.JobDescription</div>
+                            <div>
+                                <div>Ecm:</div>
+                                <div>@obj.Job.Ecm</div>
+                            </div>
+                            <div>
+                                <div>Task:</div>
+                                <div>@obj.Job.Gpdm</div>
+                            </div>
+                        </div>
+                        <div class="InboxListCardDates">
+
+                            <div>
+                                <div>Started:</div>
+                                <div><input type="text" value="@obj.Job.Started" class="form-control" name="Started"></div>
+                            </div>
+                            <div>
+                                <div>Finished:</div>
+                                <div><input type="text" value="@obj.Job.Finished" class="form-control" name="Finished"></div>
+                            </div>
+                            <div>
+                                <div>Predicted:</div>
+                                <div><input type="text" value="@obj.WhenComplete" class="form-control" name="WhenComplete"></div>
+                            </div>
+                        </div>
+                        <div class="InboxListCardCad">
+                            <div>
+                                <div>Created 3D:</div>
+                                <div><input type="text" value="@obj.Components" class="form-control" name="Components"></div>
+                            </div>
+                            <div>
+                                <div>Created Comp. 2D:</div>
+                                <div><input type="text" value="@obj.DrawingsComponents" class="form-control" name="DrawingsComponents"></div>
+                            </div>
+                            <div>
+                                <div>Created Assy. 2D:</div>
+                                <div><input type="text" value="@obj.DrawingsAssembly" class="form-control" name="DrawingsAssembly"></div>
+                            </div>
+                            <div>
+                                <div>Project Hours:</div>
+                                <div><input type="text" value="@obj.Hours" class="form-control" name="Hours"></div>
+                            </div>
+                        </div>
+                        <div class="InboxListCardIcons">
+                            <div>Complete</div>
+                            <div><button type="submit" class="btn btn-primary">Submit</button></div>
+                            <div>Delete</div>
+                        </div>*@
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<body>
         @foreach (var obj in Model)
-        {
-            <tr>
-                <td width="6%"> @obj.Received</td>
-                <td width="6%">@obj.DueDate</td>
-                <td width="6%"> @obj.Started</td>
-                <td width="6%">@obj.Finished</td>
-                <td width="4%"> @obj.Status</td>
-                <td width="4%">@obj.Type</td>
-                <td width="10%"> @obj.System</td>
-                <td width="10%">@obj.JobDescription</td>
-                <td width="10%"> @obj.Engineer</td>
-@*                <td width="10%">@obj.ProjectName</td>
-                <td width="10%"> @obj.Client</td>
-                <td width="10%">@obj.ProjectName</td>*@
-                
-                
-                <td>
-                    <a asp-action="CreateOrEdit" asp-route-id="@obj.JobId">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@obj.JobId">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@obj.JobId">Delete</a>
-                </td>
-            </tr>
+        {      
+            <div class="line" asp-action="Details" asp-route-id="@obj.JobId">
+            <div class="jobId_content"> @obj.JobId</div>
+            <div class="date_content"> @obj.Received</div>
+            <div class="date_content">@obj.DueDate</div>
+            <div class="date_content"> @obj.Started</div>
+            <div class="date_content">@obj.Finished</div>
+            <div class="status_content"> @obj.Status</div>
+            <div class="type_content">@obj.Type</div>
+            <div class="system_content"> @obj.System</div>
+            <div class="responsible_engineer_content">Mroczkowski Dawid</div>
+            <div class="description_projectname_content">@obj.JobDescription</div>
+            <div class="responsible_engineer_content">@obj.Engineer</div>
+            <div class="ecm_projectnumber_content"> @obj.Ecm</div>
+            <div class="gpdm_content"> @obj.Gpdm</div>
+            <div class="ecm_projectnumber_content">@obj.ProjectNumber</div>
+            <div class="ecm_projectnumber_content"> @obj.Client</div>
+            <div class="description_projectname_content">@obj.ProjectName</div>
+            <form asp-controller="Home" asp-action="AddToInbox" method="post">
+                <input type="hidden" name="jobid" value="@obj.JobId" class="form-control">
+                <button type="submit" class="btn btn-primary">Add</button>
+            </form>
+            </div>
         }
-    </tbody>
-</table>
+</body>
+
+
 

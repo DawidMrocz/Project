@@ -1,31 +1,31 @@
+using Aplikacja.DTOS.UserDtos;
+using Aplikacja.Entities.UserModel;
 using Aplikacja.Models;
+using Aplikacja.Repositories.CatRepository;
 using Aplikacja.Repositories.JobRepository;
+using Aplikacja.Repositories.RaportRepository;
+using Aplikacja.Repositories.UserRepository;
 using Aplikacja.Settings;
+using FluentValidation;
+using InboxMicroservice.Repositories;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
+using Newtonsoft.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
 var authenticationSettings = new AuthenticationSettings();
 builder.Services.AddSingleton(authenticationSettings);
 builder.Configuration.GetSection("Authentication").Bind(authenticationSettings);
-builder.Services.AddAuthentication(option =>
+
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(option =>
 {
-    option.DefaultAuthenticateScheme = "Bearer";
-    option.DefaultScheme = "Bearer";
-    option.DefaultChallengeScheme = "Bearer";
-}).AddJwtBearer(cfg =>
-{
-    cfg.RequireHttpsMetadata = false;
-    cfg.SaveToken = true;
-    cfg.TokenValidationParameters = new TokenValidationParameters
-    {
-        ValidIssuer = authenticationSettings.JwtIssuer,
-        ValidAudience = authenticationSettings.JwtIssuer,
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authenticationSettings.JwtKey)),
-    };
+    option.LoginPath = "/Access/Login";
+    option.ExpireTimeSpan = TimeSpan.FromMinutes(20);
 });
+
 builder.Services.AddStackExchangeRedisCache(options =>
 {
     options.Configuration = builder.Configuration.GetConnectionString("Redis");
@@ -46,11 +46,25 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.EnableSensitiveDataLogging();
 });
 
+//builder.Services.AddMvc()
+//     .AddNewtonsoftJson(
+//          options => {
+//              options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+//          });
+
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
-//builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
+builder.Services.AddScoped<IValidator<RegisterDto>, CreateUserCommandValidator>();
+
+
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IJobRepository, JobRepository>();
-//builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
-//builder.Services.AddScoped<IValidator<RegisterDto>, CreateUserCommandValidator>();
+builder.Services.AddScoped<ICatRepository, CatRepository>();
+builder.Services.AddScoped<IInboxRepository, InboxRepository>();
+builder.Services.AddScoped<IRaportRepository, RaportRepository>();
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -65,7 +79,8 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-
+//app.UseSession();
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(

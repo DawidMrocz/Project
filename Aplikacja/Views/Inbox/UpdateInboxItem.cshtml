@@ -1,0 +1,29 @@
+﻿@model Aplikacja.Entities.InboxModel.InboxItem
+@{
+    ViewData["Title"] = "Privacy Page";
+}
+
+<form method="post" action="Register">
+    <div class="form-group">
+        <label for="exampleInputEmail1">Hours</label>
+        <input type="text" class="form-control" placeholder="Hours..." asp-for="Hours">
+    </div>
+    <div class="form-group">
+        <label for="exampleInputEmail1">Components</label>
+        <input type="text" class="form-control" placeholder="Components..." asp-for="Components">
+    </div>
+    <div class="form-group">
+        <label for="exampleInputEmail1">DrawingsComponents</label>
+        <input type="text" class="form-control" placeholder="DrawingsComponents..." asp-for="DrawingsComponents">
+    </div>
+    <div class="form-group">
+        <label for="exampleInputEmail1">DrawingsAssembly</label>
+        <input type="text" class="form-control" placeholder="DrawingsAssembly..." asp-for="DrawingsAssembly">
+    </div>
+    <div class="form-group">
+        <label for="exampleInputEmail1">WhenComplete</label>
+        <input type="text" class="form-control" placeholder="WhenComplete..." asp-for="WhenComplete">
+    </div>
+
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>

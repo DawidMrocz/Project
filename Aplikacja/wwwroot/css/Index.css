@@ -1,0 +1,73 @@
+﻿
+.line {
+    justify-content: center;
+    display: flex;
+    margin: 7px;
+    flex-direction: row;
+    -webkit-box-shadow: -6px 6px 3px -3px rgba(66, 68, 90, 1);
+    -moz-box-shadow: -6px 6px 3px -3px rgba(66, 68, 90, 1);
+    box-shadow: -6px 6px 3px -3px rgba(66, 68, 90, 1);
+    transition: 0.1s;
+}
+
+.line:hover {
+    transform:scale(1.005);
+}
+
+    .line > div {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 30px;
+        margin: 1px;
+        padding: 1px;
+        font-size: 10px;
+        justify-content: center;
+        text-align: center;
+        font-family: 'Lexend Deca', sans-serif;
+    }
+    .jobId_content {
+        width: 100px;
+    }
+    .date_content {
+        width:200px;
+    }
+    .status_content {
+        width: 200px;
+        color:green;
+    }
+    .system_content {
+        width: 120px;
+        color: red;
+    }
+    .type_content {
+        width: 120px;
+    }
+    .gpdm_content {
+        width: 60px;
+    }
+    .client_content {
+        width: 250px;
+    }
+    .responsible_engineer_content {
+        width: 350px;
+    }
+    .description_projectname_content {
+        width: 600px;
+    }
+    .ecm_projectnumber_content {
+        width: 160px;
+    }
+ 
+
+@media (max-width: 800px) {
+    .line {
+        width: 80%;
+        flex-direction: column;
+    }
+    .line > div {
+        border-bottom:2px solid grey;
+         width: 100%;
+    }
+}
+

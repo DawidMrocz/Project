@@ -1,6 +1,8 @@
 ﻿
 
+using Aplikacja.Entities.InboxModel;
 using Aplikacja.Entities.JobModel;
+using Aplikacja.Entities.RaportModels;
 using Aplikacja.Entities.UserModel;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,9 +19,9 @@ namespace Aplikacja.Models
         {
             modelBuilder.Entity<Job>().HasData(
                 new Job()
-                {
-                    JobId = 1,
-                    JobDescription = "Create drawing",
+                {   
+                    JobId=1,
+                    JobDescription = "Create Muffler",
                     Type = "2D",
                     System = "Catia",
                     Link = "linkt o task",
@@ -31,13 +33,12 @@ namespace Aplikacja.Models
                     ProjectName = "sap text",
                     Status = "2D",
                     Received = "15.22.2022",
-
                 },
                 new Job()
                 {
                     JobId = 2,
                     JobDescription = "Create drawing",
-                    Type = "2D",
+                    Type = "3D",
                     System = "Catia",
                     Link = "linkt o task",
                     Engineer = "Agata",
@@ -53,7 +54,7 @@ namespace Aplikacja.Models
                 new Job()
                 {
                     JobId = 3,
-                    JobDescription = "Create drawing",
+                    JobDescription = "Update hangers",
                     Type = "2D",
                     System = "Catia",
                     Link = "linkt o task",
@@ -66,31 +67,80 @@ namespace Aplikacja.Models
                     Status = "2D",
                     Received = "20.11.2022",
                 }
-            );
+            ); ;
             modelBuilder.Entity<User>().HasData(
                 new User
                 {
-                    UserId = 1,
+                    UserId=1,
                     Name = "Dawid",
                     PasswordHash = "zxcasdqwe",
                     Email = "dawid@tlen.pl",
                     CCtr = "RS8531",
                     ActTyp = "L8531",
                     Role = "Admin",
-                    Photo = "zdjecie"
+                    Photo = "zdjecie",
+                    //Inbox = new Inbox()
+                    //{
+
+                    //    InboxItems = new List<InboxItem>()
+                    //    {
+                    //        new InboxItem()
+                    //        {
+
+                    //            JobId = 1,
+                    //            Hours = 2,
+                    //            Components = 0,
+                    //            DrawingsComponents = 0,
+                    //            DrawingsAssembly = 0,
+                    //        }
+                    //    }
+                    //}
                 },
                 new User
                 {
                     UserId = 2,
-                    Name = "Dawid2",
+                    Name = "Agata",
                     PasswordHash = "zxcasdqwe",
-                    Email = "dawid2@tlen.pl",
+                    Email = "agata@tlen.pl",
                     CCtr = "RS8531",
                     ActTyp = "L8531",
                     Role = "Manager",
-                    Photo = "zdjecie"
+                    Photo = "zdjecie",
+                    //Inbox = new Inbox()
+                    //{
+                    //    UserId = 2,
+                    //    InboxItems = new List<InboxItem>()
+                    //    {
+                    //        new InboxItem()
+                    //        {
+                    //            JobId = 1,
+                    //            Hours = 2,
+                    //            Components = 0,
+                    //            DrawingsComponents = 0,
+                    //            DrawingsAssembly = 0,
+                    //        }
+                    //    }
+                    //}
                 }
             );
+            //modelBuilder.Entity<Raport>().HasData(
+            //    new Raport
+            //    {
+            //        Id = 1,
+            //        TotalHours = 0
+            //    },
+            //    new Raport
+            //    {
+            //        Id = 2,
+            //        TotalHours = 0
+            //    },
+            //    new Raport
+            //    {
+            //        Id = 3,
+            //        TotalHours = 0
+            //    }
+            //);
+
         }
     }
 }

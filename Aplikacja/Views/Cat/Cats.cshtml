@@ -1,0 +1,15 @@
+﻿@model List<Aplikacja.DTOS.CatDto.CatDTO>
+@{
+    ViewData["Title"] = "Privacy Page";
+}
+
+<body>
+    @foreach (var obj in Model)
+    {
+            <div class="line">
+                <div class="jobId_content"> @obj.CatCreated</div>
+                <div class="jobId_content"> @obj.CatId</div>
+                <a asp-action="Cat" asp-controller="Cat" asp-route-id="@obj.CatId">See cat</a>
+            </div>
+    }
+</body>

@@ -1,0 +1,173 @@
+﻿.Inbox {
+    justify-content: start;
+    display: flex;
+    margin: 0px;
+    width: 100%;
+    flex-direction: row;
+}
+
+.InboxTab {
+    align-content:center;
+    width:20%;
+    display: flex;
+    padding:5px;
+    flex-direction: column;
+}
+.InboxTab > div {
+    justify-content: center;
+    align-content: center;
+    width: 100%;
+    display: flex;
+    margin:5px;
+    flex-direction: column;
+}
+
+.InboxList {
+    justify-content: center;
+    align-content: center;
+    display: flex;
+    margin: 0px;
+    padding: 10px;
+    flex-direction: column;
+}
+
+.InboxListCard {
+    justify-content: center;
+    display: flex;
+    margin: 5px;
+    padding: 2px;
+    flex-direction: row;
+    -webkit-box-shadow: -6px 6px 3px -3px rgba(66, 68, 90, 1);
+    -moz-box-shadow: -6px 6px 3px -3px rgba(66, 68, 90, 1);
+    box-shadow: -6px 6px 3px -3px rgba(66, 68, 90, 1);
+}
+
+.InboxListCardStatus {
+    background-color: aliceblue;
+    justify-content: center;
+    text-align: center;
+    display: flex;
+    margin: 5px;
+    width: 120px;
+    flex-direction: column;
+    
+}
+
+.InboxListCardInfos {
+    background-color:whitesmoke;
+    justify-content: center;
+    display: flex;
+    margin: 2px;
+    flex-direction: column;
+    font-size: 12px;
+    padding: 3px;
+    border-radius: 10px;
+}
+
+.InboxListCardInfos > div{
+    justify-content: space-evenly;
+    display: flex;
+    margin: 2px;
+    flex-direction: row;
+    border-bottom:1px solid grey;
+}
+
+    .InboxListCardInfos > div > div{
+        justify-content: space-evenly;
+        display: flex;
+        margin: 2px;
+        width: 100px;
+        flex-direction: row;
+    }
+
+.InboxListCardDates {
+    background-color: whitesmoke;
+    justify-content: center;
+    display: flex;
+    margin: 2px;
+    flex-direction: column;
+    font-size: 12px;
+    padding: 3px;
+    border-radius: 10px;
+}
+
+    .InboxListCardDates > div {
+        justify-content: center;
+        display: flex;
+        margin: 2px;
+        width: 150px;
+        flex-direction: row;
+        border-bottom: 1px solid grey;
+    }
+
+    .InboxListCardDates > div > div {
+        justify-content: center;
+        text-align:center;
+        display: flex;
+        margin: 2px;
+        width: 150px;
+        flex-direction: column;
+    }
+
+.InboxListCardCad {
+    background-color: whitesmoke;
+    justify-content: center;
+    display: flex;
+    margin: 2px;
+    flex-direction: column;
+    font-size: 12px;
+    padding: 3px;
+    border-radius: 10px;
+}
+
+    .InboxListCardCad > div {
+        justify-content: center;
+        display: flex;
+        margin: 2px;
+        flex-direction: row;
+        border-bottom: 1px solid grey;
+    }
+
+.InboxListCardCad > div > div{
+    justify-content: center;
+    text-align:center;
+    display: flex;
+    margin: 2px;
+    width: 110px;
+    flex-direction: column;
+}
+
+.InboxListCardIcons {
+    background-color: whitesmoke;
+    justify-content: center;
+    text-align: center;
+    display: flex;
+    margin: 2px;
+    padding: 3px;
+    flex-direction: column;
+    font-size: 12px;
+    border-radius: 10px;
+}
+
+    .InboxListCardIcons > div {
+        justify-content: center;
+        text-align: center;
+        display: flex;
+        margin: 2px;
+        padding: 2px;
+        flex-direction: column;
+        font-size: 12px;
+        border-bottom: 1px solid grey;
+    }
+
+@media (max-width: 800px) {
+    .line {
+        width: 80%;
+        flex-direction: column;
+    }
+
+        .line > div {
+            border-bottom: 2px solid grey;
+            width: 100%;
+        }
+}

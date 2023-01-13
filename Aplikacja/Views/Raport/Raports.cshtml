@@ -1,0 +1,15 @@
+﻿@model List<Aplikacja.Entities.RaportModels.Raport>
+@{
+    ViewData["Title"] = "Privacy Page";
+}
+
+<body>
+    @foreach (var obj in Model)
+    {
+        <div class="line">
+            <div class="jobId_content"> @obj.Created</div>
+            <div class="jobId_content"> @obj.RaportId</div>
+            <a asp-action="Raport" asp-controller="Raport" asp-route-id="@obj.RaportId">See raport</a>
+        </div>
+    }
+</body>

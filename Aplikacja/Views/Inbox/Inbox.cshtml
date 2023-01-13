@@ -1,0 +1,82 @@
+﻿@model Aplikacja.Entities.InboxModel.Inbox
+@{
+    ViewData["Title"] = "Privacy Page";
+}
+
+<head>
+    <link rel="stylesheet" href="~/css/Inbox.css" asp-append-version="true" />
+</head>
+
+    <div class="Inbox">
+        <div class="InboxTab">
+        <div>@Model.User.Name</div>
+        </div>
+        <div class="InboxList">
+        @foreach (var obj in Model.InboxItems)
+        {
+            <form method="post" action="UpdateInboxItem">
+                <input type="hidden" name="inboxItemId" value="@obj.InboxItemId" class="form-control">
+                <div class="InboxListCard">
+                    <div class="InboxListCardStatus">Status  <input type="text" value="@obj.Job.Status" class="form-control" name="Status"></div>
+                    <div class="InboxListCardStatus">Entry date  <input type="text"  class="form-control" name="entryDate"></div>
+                    <div class="InboxListCardInfos">
+                        <div>@obj.Job.JobDescription</div>
+                        <div>
+                            <div>Ecm:</div>
+                            <div>@obj.Job.Ecm</div>
+                        </div>
+                        <div>
+                            <div>Task:</div>
+                            <div>@obj.Job.Gpdm</div>
+                        </div>
+                    </div>
+                    <div class="InboxListCardDates">
+
+                        <div>
+                            <div>Started:</div>
+                            <div><input type="text" value="@obj.Job.Started" class="form-control" name="Started"></div>
+                        </div>
+                        <div>
+                            <div>Finished:</div>
+                            <div><input type="text" value="@obj.Job.Finished" class="form-control" name="Finished"></div>
+                        </div>
+                        <div>
+                            <div>Predicted:</div>
+                            <div><input type="text" value="@obj.WhenComplete" class="form-control" name="WhenComplete"></div>
+                        </div>
+                    </div>
+                    <div class="InboxListCardCad">
+                        <div>
+                            <div>Created 3D:</div>
+                            <div><input type="text" value="@obj.Components" class="form-control" name="Components"></div>
+                        </div>
+                        <div>
+                            <div>Created Comp. 2D:</div>
+                            <div><input type="text" value="@obj.DrawingsComponents" class="form-control" name="DrawingsComponents"></div>
+                        </div>
+                        <div>
+                            <div>Created Assy. 2D:</div>
+                            <div><input type="text" value="@obj.DrawingsAssembly" class="form-control" name="DrawingsAssembly"></div>
+                        </div>
+                        <div>
+                            <div>Project Hours:</div>
+                            <div><input type="text" value="@obj.Hours" class="form-control" name="Hours"></div>
+                        </div>
+                    </div>
+                    <div class="InboxListCardIcons">
+                        <div>Complete</div>
+                        <div><button type="submit" class="btn btn-primary">Submit</button></div>
+                        <div>Delete</div>
+                    </div>
+                </div>
+            </form>
+            }
+        </div>
+        
+        @*<h1>@obj.Hours</h1>
+
+        <h1>@obj.Components</h1>
+        <h1>@obj.Job.Client</h1>*@
+    </div>
+    
+

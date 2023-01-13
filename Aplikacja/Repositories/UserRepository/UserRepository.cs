@@ -1,18 +1,16 @@
-﻿
-using Aplikacja.DTOS.UserDtos;
-
+﻿using Aplikacja.DTOS.UserDtos;
+using Aplikacja.Entities.InboxModel;
 using Aplikacja.Entities.UserModel;
 using Aplikacja.Extensions;
 using Aplikacja.Models;
 using Aplikacja.Settings;
 using AutoMapper;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Text;
 
 namespace Aplikacja.Repositories.UserRepository
 {
@@ -23,13 +21,15 @@ namespace Aplikacja.Repositories.UserRepository
         private readonly IPasswordHasher<User> _passwordHasher;
         private readonly IDistributedCache _cache;
         private readonly AuthenticationSettings _authenticationSettings;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
         public UserRepository(
             ApplicationDbContext context,
             IMapper mapper,
             IPasswordHasher<User> passwordHasher,
             IDistributedCache cache,
-            AuthenticationSettings authenticationSettings
+            AuthenticationSettings authenticationSettings,
+            IHttpContextAccessor httpContextAccessor
             )
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
@@ -37,6 +37,18 @@ namespace Aplikacja.Repositories.UserRepository
             _passwordHasher = passwordHasher ?? throw new ArgumentNullException(nameof(passwordHasher));
             _cache = cache ?? throw new ArgumentNullException(nameof(cache));
             _authenticationSettings = authenticationSettings ?? throw new ArgumentNullException(nameof(authenticationSettings));
+            _httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
+        }
+
+        public async Task<List<UserDto>> GetUsers()
+        {
+            List<User>? users = await _cache.GetRecordAsync<List<User>>("AllUsers");
+            if (users is null)
+            {
+                users = await _context.Users.AsNoTracking().OrderBy(n => n.Name).ToListAsync();
+                await _cache.SetRecordAsync("AllUsers", users);
+            }
+            return _mapper.Map<List<UserDto>>(users);
         }
 
         public async Task<UserDto> GetProfile(int userId)
@@ -59,52 +71,44 @@ namespace Aplikacja.Repositories.UserRepository
                 CCtr = command.CCtr,
                 Photo = command.Photo,
                 Role = "User",
-               // Cats = new List<Cat>(),
-               // UserRaports = new List<UserRaport>(), 
+                Inbox = new Inbox()
             };
 
             newUser.PasswordHash = _passwordHasher.HashPassword(newUser, command.Password);
             await _context.Users.AddAsync(newUser);
-
-            //Inbox newInbox = new Inbox()
-            //{
-            //    UserId = newUser.UserId
-            //};
-
-            //await _context.Inboxs.AddAsync(newInbox);
             await _context.SaveChangesAsync();
             return newUser;
         }
 
-        public async Task<String> LoginUser(LoginDto command)
+        public async Task<bool> LoginUser(LoginDto command)
         {
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == command.Email);
+
             if (user is null) throw new BadHttpRequestException("Bad");
+         
             var result = _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, command.Password);
+
             if (result == PasswordVerificationResult.Failed) throw new BadHttpRequestException("Bad");
-            var claims = new List<Claim>()
+
+            List<Claim> claims = new List<Claim>()
                 {
                     new Claim(ClaimTypes.NameIdentifier,user.UserId.ToString()),
                     new Claim(ClaimTypes.Name,user.Name),
                     new Claim(ClaimTypes.Role,user.Role),
-                    new Claim("CCtr", user.CCtr.ToString()),
-                    new Claim("ActTyp", user.ActTyp.ToString()),
-                    new Claim("Photo", user.Photo.ToString())
-            };
+                };
+            ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_authenticationSettings.JwtKey));
-            var cred = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-            var expires = DateTime.Now.AddDays(_authenticationSettings.JwtExpireDays);
-            var token = new JwtSecurityToken(
-                _authenticationSettings.JwtIssuer,
-                _authenticationSettings.JwtIssuer,
-                claims,
-                expires: expires,
-                signingCredentials: cred
-            );
-            var tokenHandler = new JwtSecurityTokenHandler();
-            return tokenHandler.WriteToken(token);
+            AuthenticationProperties properties = new AuthenticationProperties()
+            {
+                AllowRefresh = true,
+                IsPersistent = command.KeepLoggedIn
+            };
+            await _httpContextAccessor.HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
+                new ClaimsPrincipal(claimsIdentity), properties);
+
+            return true;
         }
+
         public async Task<bool> DeleteUser(int userId)
         {
             var myProfile = await _context.Users.SingleAsync(r => r.UserId == userId);

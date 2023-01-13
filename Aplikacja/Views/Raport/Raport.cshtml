@@ -1,0 +1,62 @@
+﻿@model Aplikacja.DTOS.RaportDto.RaportDTO
+@{
+    ViewData["Title"] = "Privacy Page";
+}
+
+<table class="table table-striped table-hover" style="width:100%">
+    <thead>
+        <tr>
+            <th>
+                Cad System
+            </th>
+            <th>
+                ECM
+            </th>
+            <th>
+                Task
+            </th>
+            <th>
+                3D Models
+            </th>
+            <th>
+                2D Comp. Drawings
+            </th>
+            <th>
+                2D Assy. Drawings
+            </th>
+            <th>
+                Start Date
+            </th>
+            <th>
+                Finish Date
+            </th>
+            <th>
+                DueTo Date
+            </th>
+            <th>
+                Hours
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var obj in Model.UserRaports)
+        {
+            @foreach (var obj2 in obj.UserRaportRecords)
+            {
+            <tr>
+                    <td width="6%"> @obj2.System</td>
+                    <td width="6%"> @obj2.Ecm</td>
+                    <td width="6%"> @obj2.Gpdm</td>
+                    <td width="6%"> @obj2.Components</td>
+                    <td width="6%"> @obj2.DrawingsComponents</td>
+                    <td width="6%"> @obj2.DrawingsAssembly</td>
+                    <td width="6%"> @obj2.Started</td>
+                    <td width="6%"> @obj2.Finished</td>
+                    <td width="6%"> @obj2.DueDate</td>
+                    <td width="6%"> @obj2.Hours</td>
+            </tr>
+            }
+        }
+    </tbody>
+</table>
+
