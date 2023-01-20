@@ -7,26 +7,29 @@
 }
 
 .InboxTab {
-    align-content:center;
-    width:20%;
+    align-content: center;
+    padding:10px 60px 10px 60px;
     display: flex;
-    padding:5px;
     flex-direction: column;
 }
-.InboxTab > div {
-    justify-content: center;
-    align-content: center;
-    width: 100%;
-    display: flex;
-    margin:5px;
-    flex-direction: column;
+    .InboxTab > div {
+        justify-content: center;
+        align-content: center;
+        display: flex;
+        text-align:center;
+        margin: 5px;
+    }
+
+.InboxProfilePhoto{
+    max-height:200px;
+    max-width:200px;
+    border-radius:100px;
 }
 
 .InboxList {
     justify-content: center;
     align-content: center;
     display: flex;
-    margin: 0px;
     padding: 10px;
     flex-direction: column;
 }
@@ -34,140 +37,260 @@
 .InboxListCard {
     justify-content: center;
     display: flex;
-    margin: 5px;
+    align-items: center;
+    margin: 10px;
     padding: 2px;
     flex-direction: row;
-    -webkit-box-shadow: -6px 6px 3px -3px rgba(66, 68, 90, 1);
-    -moz-box-shadow: -6px 6px 3px -3px rgba(66, 68, 90, 1);
-    box-shadow: -6px 6px 3px -3px rgba(66, 68, 90, 1);
+    -webkit-box-shadow: 8px 8px 24px -10px rgba(66, 68, 90, 1);
+    -moz-box-shadow: 8px 8px 24px -10px rgba(66, 68, 90, 1);
+    box-shadow: 8px 8px 24px -10px rgba(66, 68, 90, 1);
+    border-radius: 10px;
 }
 
 .InboxListCardStatus {
-    background-color: aliceblue;
     justify-content: center;
     text-align: center;
     display: flex;
     margin: 5px;
-    width: 120px;
+    border: 3px solid #EF4765;
+    min-width: 140px;
+    max-width: 140px;
+    min-height: 140px;
+    max-height: 140px;
+    color: #EF4765;
+    border-radius: 90px;
+    font-size: 20px;
     flex-direction: column;
-    
 }
 
 .InboxListCardInfos {
-    background-color:whitesmoke;
+    
     justify-content: center;
     display: flex;
     margin: 2px;
     flex-direction: column;
-    font-size: 12px;
     padding: 3px;
-    border-radius: 10px;
 }
 
-.InboxListCardInfos > div{
-    justify-content: space-evenly;
+
+.InboxListCardTitles {
+    justify-content: flex-start;
+    border-bottom:1px solid grey;
     display: flex;
+    flex-wrap:wrap;
     margin: 2px;
     flex-direction: row;
-    border-bottom:1px solid grey;
+    font-size: 14px;
 }
 
-    .InboxListCardInfos > div > div{
-        justify-content: space-evenly;
+    .InboxListCardTitles > div:first-child {
+        width: 500px;
+        justify-content: flex-start;
         display: flex;
-        margin: 2px;
-        width: 100px;
-        flex-direction: row;
     }
 
-.InboxListCardDates {
-    background-color: whitesmoke;
-    justify-content: center;
-    display: flex;
-    margin: 2px;
-    flex-direction: column;
-    font-size: 12px;
-    padding: 3px;
-    border-radius: 10px;
-}
-
-    .InboxListCardDates > div {
+    .InboxListCardTitles > div {
         justify-content: center;
         display: flex;
-        margin: 2px;
-        width: 150px;
+        flex-wrap: wrap;
         flex-direction: row;
-        border-bottom: 1px solid grey;
+        padding: 3px;
     }
 
-    .InboxListCardDates > div > div {
+    .InboxListCardTitles > div > div{
         justify-content: center;
-        text-align:center;
         display: flex;
-        margin: 2px;
-        width: 150px;
-        flex-direction: column;
+        flex-direction: row;
+        padding: 1px;
     }
 
-.InboxListCardCad {
-    background-color: whitesmoke;
-    justify-content: center;
+.InboxListCardDescriptions {
+    justify-content: flex-start;
     display: flex;
+    flex-wrap: wrap;
     margin: 2px;
-    flex-direction: column;
-    font-size: 12px;
-    padding: 3px;
-    border-radius: 10px;
+    flex-direction: row;
+    font-size: 9px;
 }
 
-    .InboxListCardCad > div {
+    .InboxListCardDescriptions > div {    
         justify-content: center;
         display: flex;
         margin: 2px;
         flex-direction: row;
-        border-bottom: 1px solid grey;
     }
 
-.InboxListCardCad > div > div{
-    justify-content: center;
-    text-align:center;
-    display: flex;
-    margin: 2px;
-    width: 110px;
-    flex-direction: column;
-}
-
-.InboxListCardIcons {
-    background-color: whitesmoke;
-    justify-content: center;
-    text-align: center;
-    display: flex;
-    margin: 2px;
-    padding: 3px;
-    flex-direction: column;
-    font-size: 12px;
-    border-radius: 10px;
-}
-
-    .InboxListCardIcons > div {
+    .InboxListCardDescriptions > div > div {   
         justify-content: center;
-        text-align: center;
+        display: flex;
+        flex-direction: row;
+        padding: 1px;
+    }
+
+.InboxListCardDescriptions2 {
+    justify-content: center;
+    display: flex;
+    flex-wrap: wrap;
+    margin: 2px;
+    flex-direction: row;
+    color: #EF4765;
+    font-size: 12px;
+}
+
+    .InboxListCardDescriptions2 > div {
+        border: 2px solid #EF4765;
         display: flex;
         margin: 2px;
-        padding: 2px;
-        flex-direction: column;
-        font-size: 12px;
-        border-bottom: 1px solid grey;
+        padding: 5px;
+        flex-direction: row;
+        border-radius: 12px;
     }
+
+        .InboxListCardDescriptions2 > div > div {
+            justify-content: center;
+            display: flex;
+            flex-direction: row;
+            padding: 1px;
+        }
+
+.InboxListCardOptions {
+    justify-content: flex-end;
+    display: flex;
+    flex-wrap: wrap;
+    margin: 2px;
+    flex-direction: row;
+    font-size: 12px;
+}
+
+.InboxListCardOptions > div {
+    justify-content: center;
+    display: flex;
+    margin: 2px;
+    padding: 1px;
+}
+
 
 @media (max-width: 800px) {
-    .line {
-        width: 80%;
+    .InboxListCard {
+        flex-direction: column;
+        border-top-left-radius:0px;
+        border-bottom-left-radius: 0px;
+    }
+    .InboxListCardTitles {
+        text-align:center;
+        flex-direction: column;
+        align-items:center;
+    }
+    .InboxListCardDescriptions {
+        justify-content:center;
+    }
+    .InboxListCardOptions {
+        justify-content: center;
+    }
+    .Inbox {
         flex-direction: column;
     }
-
-        .line > div {
-            border-bottom: 2px solid grey;
-            width: 100%;
-        }
+    .InboxListCardTitles > div:first-child {
+        justify-content: center;
+        width:80%;
+       
+    }
 }
+
+
+.button-62 {
+    background: linear-gradient(to bottom right, #EF4765, #FF9A5A);
+    border: 0;
+    border-radius: 12px;
+    color: #FFFFFF;
+    cursor: pointer;
+    display: inline-block;
+    font-family: -apple-system,system-ui,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    font-size: 10px;
+    font-weight: 300;
+    line-height: 2.5;
+    outline: transparent;
+    padding: 0 1rem;
+    text-align: center;
+    text-decoration: none;
+    transition: box-shadow .2s ease-in-out;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+    white-space: nowrap;
+}
+
+.button-62:not([disabled]):focus {
+    box-shadow: 0 0 .25rem rgba(0, 0, 0, 0.5), -.125rem -.125rem 1rem rgba(239, 71, 101, 0.5), .125rem .125rem 1rem rgba(255, 154, 90, 0.5);
+}
+
+.button-62:not([disabled]):hover {
+    box-shadow: 0 0 .25rem rgba(0, 0, 0, 0.5), -.125rem -.125rem 1rem rgba(239, 71, 101, 0.5), .125rem .125rem 1rem rgba(255, 154, 90, 0.5);
+}
+
+
+
+*, *::after, *::before {
+    box-sizing: border-box;
+}
+
+.modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    transition: 200ms ease-in-out;
+    border: 1px solid black;
+    border-radius: 10px;
+    z-index: 10;
+    background-color: white;
+    width: 500px;
+    max-width: 80%;
+}
+
+    .modal.active {
+        transform: translate(-50%, -50%) scale(1);
+    }
+
+.modal-header {
+    padding: 10px 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid black;
+}
+
+    .modal-header .title {
+        font-size: 1.25rem;
+        font-weight: bold;
+    }
+
+    .modal-header .close-button {
+        cursor: pointer;
+        border: none;
+        outline: none;
+        background: none;
+        font-size: 1.25rem;
+        font-weight: bold;
+    }
+
+.modal-body {
+    padding: 10px 15px;
+}
+
+#overlay {
+    position: fixed;
+    opacity: 0;
+    transition: 200ms ease-in-out;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, .5);
+    pointer-events: none;
+}
+
+    #overlay.active {
+        opacity: 1;
+        pointer-events: all;
+    }

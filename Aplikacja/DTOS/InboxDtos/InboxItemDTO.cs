@@ -1,6 +1,4 @@
-﻿using Aplikacja.Entities.InboxModel;
-using Aplikacja.Entities.JobModel;
-
+﻿
 namespace Aplikacja.DTOS.InboxDtos
 {
     public class InboxItemDTO
@@ -11,9 +9,13 @@ namespace Aplikacja.DTOS.InboxDtos
         public int DrawingsComponents { get; set; }
         public int DrawingsAssembly { get; set; }
         public string? WhenComplete { get; set; }
-        public int JobId { get; set; }
-        public Job? Job { get; set; }
-        public int? InboxId { get; set; }
-        public Inbox? Inbox { get; set; }
+        public int? Ecm { get; set; }
+        public int? Gpdm { get; set; }
+        public string? DueDate { get; set; }
+        public string? Started { get; set; }
+        public string? Finished { get; set; }
+        public string? Link { get; set; }
+        public string? JobDescription { get; set; }
+        public string? Status { get; set; }
     }
 }

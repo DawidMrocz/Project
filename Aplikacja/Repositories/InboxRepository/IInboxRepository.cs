@@ -7,11 +7,11 @@ namespace InboxMicroservice.Repositories
     public interface IInboxRepository
     {
 
-        public Task<Inbox> GetMyInbox(int userId);
-        public Task<InboxItem> GetMyInboxItem(int inboxItemId);
+        public Task<InboxDTO> GetMyInbox(int userId);
+        public Task<InboxItemDTO> GetMyInboxItem(int inboxItemId);
 
         public Task<bool> DeleteInboxItem(int userId, int inboxItemId);
-        public Task<InboxItem> UpdateInboxItem(UpdateInboxItemDto updateInboxItemDto,int inboxItemId);
+        public Task<InboxItemDTO> UpdateInboxItem(UpdateInboxItemDto updateInboxItemDto,int inboxItemId);
 
 
  

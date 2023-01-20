@@ -1,5 +1,8 @@
-﻿using Aplikacja.Entities.CatModels;
+﻿using Aplikacja.DTOS.CatDto;
+using Aplikacja.Entities.CatModels;
 using Aplikacja.Models;
+using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
 
@@ -11,18 +14,22 @@ namespace Aplikacja.Repositories.CatRepository
 
             private readonly ApplicationDbContext _context;
             private readonly IDistributedCache _cache;
-            public CatRepository(ApplicationDbContext context, IDistributedCache cache)
-            {
-                _context = context;
-                _cache = cache;
-            }
+            private readonly IMapper _mapper;
 
-            public async Task<Cat> GetCat(int catId)
+            public CatRepository(ApplicationDbContext context, IDistributedCache cache, IMapper mapper)
+            {
+                _context = context ?? throw new ArgumentNullException(nameof(context));
+                _cache = cache ?? throw new ArgumentNullException(nameof(cache));
+                _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+        }
+
+            public async Task<CatDTO> GetCat(int catId)
             {
                 var cat = await _context.Cats
                     .Include(r => r.User)
                     .Include(r => r.CatRecords)
                     .ThenInclude(h => h.CatRecordHours)
+                    .ProjectTo<CatDTO>(_mapper.ConfigurationProvider)
                     .AsNoTracking()
                     .SingleAsync(c => c.CatId == catId);
 
@@ -31,24 +38,23 @@ namespace Aplikacja.Repositories.CatRepository
 
         public async Task<List<Cat>> GetCats()
         {
-            return await _context.Cats.ToListAsync();
+            return await _context.Cats.AsNoTracking().OrderBy(d => d.CatCreated).ToListAsync();
         }
 
-        public async Task<double> CreateCat(int userId, int inboxItemId,int entryDate)
+        public async Task<double> CreateCat(int userId, int inboxItemId,DateTime entryDate)
         {
             Cat? userCat;
-            string currentDate = DateTime.Now.ToString("yyyy MM");
             var catUser = await _context.Users.SingleAsync(u => u.UserId == userId);
-            var catExist = await _context.Cats.AnyAsync(u => u.UserId == catUser.UserId && u.CatCreated == currentDate);
+            var catExist = await _context.Cats.AnyAsync(u => u.UserId == catUser.UserId && u.CatCreated == entryDate.ToString("yyyy MM"));
             if (catExist)
             {
-                userCat = await _context.Cats.SingleAsync(u => u.UserId == catUser.UserId && u.CatCreated == currentDate);
+                userCat = await _context.Cats.SingleAsync(u => u.UserId == catUser.UserId && u.CatCreated == entryDate.ToString("yyyy MM"));
             }
             else
             {
                 userCat = new Cat()
                 {
-                    CatCreated = currentDate,
+                    CatCreated = entryDate.ToString("yyyy MM"),
                     UserId = catUser.UserId,
                 };
                 await _context.Cats.AddAsync(userCat);
@@ -81,14 +87,14 @@ namespace Aplikacja.Repositories.CatRepository
             bool hoursExits = await _context
                 .CatRecordHourss
                 .AnyAsync(c => c.CatRecordId == catRecord.CatRecordId
-                && c.Day == entryDate);
+                && c.Day == entryDate.Day);
 
             if (hoursExits)
             {
                 catRecordHour = await _context
                 .CatRecordHourss
                 .SingleAsync(c => c.CatRecordId == catRecord.CatRecordId
-                && c.Day == entryDate);
+                && c.Day == entryDate.Day);
                 catRecordHour.Hours = inboxItem.Hours;
             }
             else
@@ -97,7 +103,7 @@ namespace Aplikacja.Repositories.CatRepository
                 {
                     CatRecordId = catRecord.CatRecordId,
                     Hours = inboxItem.Hours,
-                    Day = entryDate
+                    Day = entryDate.Day
                 };
                 await _context.CatRecordHourss.AddAsync(catRecordHour);
             }
@@ -108,7 +114,7 @@ namespace Aplikacja.Repositories.CatRepository
             return sumOfHours;
         }
 
-        public async Task<double> DeleteCat(int inboxItemId, int entryDate)
+        public async Task<double> DeleteCat(int inboxItemId, DateTime entryDate)
         {
             CatRecord catRecord = await _context.CatRecords.SingleAsync(r => r.InboxItemId == inboxItemId);
 
@@ -116,7 +122,7 @@ namespace Aplikacja.Repositories.CatRepository
 
             CatRecordHours catRecordHour = await _context.CatRecordHourss
                 .SingleAsync(h => h.CatRecordId == catRecord.CatRecordId &&
-                h.Day == entryDate);
+                h.Day == entryDate.Day);
             _context.CatRecordHourss.Remove(catRecordHour);
             await _context.SaveChangesAsync();
 

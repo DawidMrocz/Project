@@ -3,6 +3,7 @@ using Aplikacja.Entities.InboxModel;
 using Aplikacja.Entities.JobModel;
 using Aplikacja.Extensions;
 using Aplikacja.Models;
+using Aplikacja.Repositories.UserRepository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
 
@@ -14,10 +15,11 @@ namespace Aplikacja.Repositories.JobRepository
         private readonly IDistributedCache _cache;
         public JobRepository(ApplicationDbContext context, IDistributedCache cache)
         {
-            _context = context;
-            _cache = cache;
+            _context = context ?? throw new ArgumentNullException(nameof(context));
+            _cache = cache ?? throw new ArgumentNullException(nameof(cache));
         }
 
+        
         public async Task<List<Job>> GetJobs()
         {
             return await _context.Jobs.ToListAsync();

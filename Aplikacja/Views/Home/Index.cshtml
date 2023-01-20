@@ -9,7 +9,7 @@
 
 <h1>List of Tasks</h1>
 
-<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+<button type="button" class="button-62" data-bs-toggle="modal" data-bs-target="#exampleModal">
     Nowe zadanie
 </button>
 
@@ -18,76 +18,98 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Nowe zadanie</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form method="post" asp-action="Create" asp-controller="Home">
-                    <div class="InboxListCard">
-                        <input type="text" class="form-control" name="JobDescription">
-                       @* <div class="InboxListCardStatus">Status  <input type="text" value="@obj.Job.Status" class="form-control" name="Status"></div>
-                        <div class="InboxListCardStatus">Entry date  <input type="text" class="form-control" name="entryDate"></div>
-                        <div class="InboxListCardInfos">
-                            <div>@obj.Job.JobDescription</div>
-                            <div>
-                                <div>Ecm:</div>
-                                <div>@obj.Job.Ecm</div>
+                <form class="row g-3" method="post" asp-action="Create" asp-controller="Home">
+                            <div class="col-md-6">
+                                <label for="inputEmail4" class="form-label">Received</label>
+                        <input type="text" class="form-control" id="inputEmail4" name="Received">
                             </div>
-                            <div>
-                                <div>Task:</div>
-                                <div>@obj.Job.Gpdm</div>
+                            <div class="col-md-6">
+                                <label for="inputPassword4" class="form-label">Due date</label>
+                        <input type="text" class="form-control" id="inputPassword4" name="Duedate">
                             </div>
+                        <div class="col-md-6">
+                            <label for="inputEmail4" class="form-label">Client</label>
+                        <input type="text" class="form-control" id="inputEmail4" name="Client">
                         </div>
-                        <div class="InboxListCardDates">
-
-                            <div>
-                                <div>Started:</div>
-                                <div><input type="text" value="@obj.Job.Started" class="form-control" name="Started"></div>
-                            </div>
-                            <div>
-                                <div>Finished:</div>
-                                <div><input type="text" value="@obj.Job.Finished" class="form-control" name="Finished"></div>
-                            </div>
-                            <div>
-                                <div>Predicted:</div>
-                                <div><input type="text" value="@obj.WhenComplete" class="form-control" name="WhenComplete"></div>
-                            </div>
+                        <div class="col-md-6">
+                            <label for="inputPassword4" class="form-label">Engineer</label>
+                        <input type="text" class="form-control" id="inputPassword4" name="Engineer">
                         </div>
-                        <div class="InboxListCardCad">
-                            <div>
-                                <div>Created 3D:</div>
-                                <div><input type="text" value="@obj.Components" class="form-control" name="Components"></div>
+                            <div class="col-12">
+                                <label for="inputAddress" class="form-label">Description</label>
+                        <input type="text" class="form-control" id="inputAddress" name="JobDescription">
                             </div>
-                            <div>
-                                <div>Created Comp. 2D:</div>
-                                <div><input type="text" value="@obj.DrawingsComponents" class="form-control" name="DrawingsComponents"></div>
-                            </div>
-                            <div>
-                                <div>Created Assy. 2D:</div>
-                                <div><input type="text" value="@obj.DrawingsAssembly" class="form-control" name="DrawingsAssembly"></div>
-                            </div>
-                            <div>
-                                <div>Project Hours:</div>
-                                <div><input type="text" value="@obj.Hours" class="form-control" name="Hours"></div>
-                            </div>
+                        <div class="col-12">
+                            <label for="inputAddress" class="form-label">Link</label>
+                        <input type="text" class="form-control" id="inputAddress" name="Link">
                         </div>
-                        <div class="InboxListCardIcons">
-                            <div>Complete</div>
-                            <div><button type="submit" class="btn btn-primary">Submit</button></div>
-                            <div>Delete</div>
-                        </div>*@
+                        <div class="col-md-6">
+                            <label for="inputEmail4" class="form-label">Project Number</label>
+                        <input type="text" class="form-control" id="inputEmail4" name="ProjectNumber">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="inputPassword4" class="form-label">Project Name</label>
+                        <input type="text" class="form-control" id="inputPassword4" name="ProjectName">
+                        </div>
+                            <div class="col-md-4">
+                                <label for="inputState" class="form-label">System</label>
+                            <select id="inputState" class="form-select" name="System">
+                                    <option selected>Catia</option>
+                                    <option>NX</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="inputState" class="form-label">Type</label>
+                                <select id="inputState" class="form-select" name="Type">
+                                    <option selected>2D</option>
+                                    <option>3D</option>
+                                    <option>2D/3D</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="inputCity" class="form-label">ECM</label>
+                        <input type="text" class="form-control" id="inputCity" name="Ecm">
+                            </div>
+                            
+                            <div class="col-md-2">
+                                <label for="inputZip" class="form-label">Task</label>
+                        <input type="text" class="form-control" id="inputZip" name="Gpdm">
+                            </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save changes</button>
                     </div>
-                </form>
+                        </form>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
-            </div>
+            
         </div>
     </div>
 </div>
 
 <body>
+        <div class="line">
+            <div class="jobId_content">ID</div>
+            <div class="date_content">Received</div>
+            <div class="date_content">DueDate</div>
+            <div class="date_content">Started</div>
+            <div class="date_content">Finished</div>
+            <div class="status_content">Status</div>
+            <div class="type_content">Type</div>
+            <div class="system_content">System</div>
+            <div class="responsible_engineer_content">Responsible</div>
+            <div class="description_projectname_content">Opis</div>
+            <div class="responsible_engineer_content">Engineer</div>
+            <div class="ecm_projectnumber_content">Ecm</div>
+            <div class="gpdm_content">Gpdm</div>
+            <div class="ecm_projectnumber_content">P.Numb</div>
+            <div class="ecm_projectnumber_content">Client</div>
+            <div class="description_projectname_content">P.Name</div>
+            <div >Options</div>
+        </div>
         @foreach (var obj in Model)
         {      
             <div class="line" asp-action="Details" asp-route-id="@obj.JobId">
@@ -109,8 +131,17 @@
             <div class="description_projectname_content">@obj.ProjectName</div>
             <form asp-controller="Home" asp-action="AddToInbox" method="post">
                 <input type="hidden" name="jobid" value="@obj.JobId" class="form-control">
-                <button type="submit" class="btn btn-primary">Add</button>
+                <button type="submit" class="button-62">Delete</button>
             </form>
+            <form asp-controller="Home" asp-action="AddToInbox" method="post">
+                <input type="hidden" name="jobid" value="@obj.JobId" class="form-control">
+                <button type="submit" class="button-62">Update</button>
+            </form>
+            <form asp-controller="Home" asp-action="AddToInbox" method="post">
+                <input type="hidden" name="jobid" value="@obj.JobId" class="form-control">
+                <button type="submit" class="button-62" role="button"> Add</button>
+            </form>
+            
             </div>
         }
 </body>

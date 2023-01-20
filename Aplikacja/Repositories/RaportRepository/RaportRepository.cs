@@ -3,6 +3,7 @@ using Aplikacja.Entities.RaportModels;
 using Aplikacja.Extensions;
 using Aplikacja.Models;
 using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
 
@@ -38,12 +39,16 @@ namespace Aplikacja.Repositories.RaportRepository
             return raport;
         }
 
-        public async Task<List<Raport>> GetRaports()
+        public async Task<List<RaportDTO>> GetRaports()
         {
-            List<Raport>? raports = await _cache.GetRecordAsync<List<Raport>>($"Raports");
+            List<RaportDTO>? raports = await _cache.GetRecordAsync<List<RaportDTO>>($"Raports");
             if (raports is null)
             {
-                raports = await _context.Raports.AsNoTracking().OrderBy(date => date.Created).ToListAsync();
+                raports = await _context.Raports
+                    .AsNoTracking()
+                    .OrderBy(c => c.Created)
+                    .ProjectTo<RaportDTO>(_mapper.ConfigurationProvider)
+                    .ToListAsync();
                 if (raports is null) throw new BadHttpRequestException("Bad request");
                 await _cache.SetRecordAsync($"Raports", raports);
             }

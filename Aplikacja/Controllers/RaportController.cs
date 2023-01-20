@@ -1,6 +1,7 @@
 ﻿using Aplikacja.DTOS.RaportDto;
 using Aplikacja.Entities.RaportModels;
 using Aplikacja.Repositories.RaportRepository;
+using Aplikacja.Repositories.UserRepository;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,20 +14,20 @@ namespace Aplikacja.Controllers
 
         public RaportController(IRaportRepository raportRepository)
         {
-            _raportRepository = raportRepository;
+            _raportRepository = raportRepository ?? throw new ArgumentNullException(nameof(raportRepository));
         }
 
         [HttpGet]
         public async Task<ActionResult<RaportDTO>> Raport([FromRoute] int id)
         {
-            var myRaport = await _raportRepository.GetRaport(id);
+            RaportDTO myRaport = await _raportRepository.GetRaport(id);
             return View(myRaport);
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<Raport>>> Raports()
+        public async Task<ActionResult<List<RaportDTO>>> Raports()
         {
-            var myRaports = await _raportRepository.GetRaports();
+            List<RaportDTO> myRaports = await _raportRepository.GetRaports();
             return View(myRaports);
         }
     }

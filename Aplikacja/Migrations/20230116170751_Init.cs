@@ -66,7 +66,7 @@ namespace Aplikacja.Migrations
                     CCtr = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ActTyp = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Role = table.Column<string>(type: "nvarchar(max)", nullable: true, defaultValue: "User"),
-                    Photo = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Photo = table.Column<byte[]>(type: "varbinary(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -260,8 +260,8 @@ namespace Aplikacja.Migrations
                 columns: new[] { "UserId", "ActTyp", "CCtr", "Email", "Name", "PasswordHash", "Photo", "Role" },
                 values: new object[,]
                 {
-                    { 1, "L8531", "RS8531", "dawid@tlen.pl", "Dawid", "zxcasdqwe", "zdjecie", "Admin" },
-                    { 2, "L8531", "RS8531", "agata@tlen.pl", "Agata", "zxcasdqwe", "zdjecie", "Manager" }
+                    { 1, "L8531", "RS8531", "dawid@tlen.pl", "Dawid", "zxcasdqwe", null, "Admin" },
+                    { 2, "L8531", "RS8531", "agata@tlen.pl", "Agata", "zxcasdqwe", null, "Manager" }
                 });
 
             migrationBuilder.CreateIndex(

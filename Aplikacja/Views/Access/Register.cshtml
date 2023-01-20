@@ -3,7 +3,7 @@
     ViewData["Title"] = "Register";
 }
 
-<form method="post" action="Register">
+<form method="post" action="Register" enctype="multipart/form-data">
     <div class="form-group">
         <label for="exampleInputEmail1">Name</label>
         <input type="text" class="form-control" placeholder="Name..." asp-for="Name">
@@ -31,6 +31,11 @@
         <label class="form-check-label" for="exampleCheck1">Check me out</label>
     </div>
     
+    <div class="mb-3">
+        <label for="formFile" class="form-label">Default file input example</label>
+        <input class="form-control" type="file" id="formFile" asp-for="ProfilePhoto">
+    </div>
+
     <button type="submit" class="btn btn-primary">Submit</button>
 </form>
 

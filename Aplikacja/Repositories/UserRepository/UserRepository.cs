@@ -5,11 +5,16 @@ using Aplikacja.Extensions;
 using Aplikacja.Models;
 using Aplikacja.Settings;
 using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using MailKit.Net.Smtp;
+using MailKit.Security;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
+using MimeKit;
 using System.Security.Claims;
 
 namespace Aplikacja.Repositories.UserRepository
@@ -42,37 +47,51 @@ namespace Aplikacja.Repositories.UserRepository
 
         public async Task<List<UserDto>> GetUsers()
         {
-            List<User>? users = await _cache.GetRecordAsync<List<User>>("AllUsers");
+            List<UserDto>? users = await _cache.GetRecordAsync<List<UserDto>>("AllUsers");
             if (users is null)
             {
-                users = await _context.Users.AsNoTracking().OrderBy(n => n.Name).ToListAsync();
+                users = await _context.Users.AsNoTracking().OrderBy(n => n.Name).ProjectTo<UserDto>(_mapper.ConfigurationProvider).ToListAsync();
                 await _cache.SetRecordAsync("AllUsers", users);
             }
-            return _mapper.Map<List<UserDto>>(users);
+            return users;
         }
 
         public async Task<UserDto> GetProfile(int userId)
         {
-            User? profile = await _cache.GetRecordAsync<User>($"Profile_{userId}");
+            UserDto? profile = await _cache.GetRecordAsync<UserDto>($"Profile_{userId}");
             if (profile is null)
             {
-                profile = await _context.Users.AsNoTracking().SingleAsync(p => p.UserId == userId);
+                profile = await _context.Users.AsNoTracking().ProjectTo<UserDto>(_mapper.ConfigurationProvider).SingleAsync(p => p.UserId == userId);
+
                 await _cache.SetRecordAsync($"Profile_{userId}", profile);
             }
-            return _mapper.Map<UserDto>(profile);
+            return profile;
         }
         public async Task<User> CreateUser(RegisterDto command)
         {
+
             User newUser = new User()
             {
                 Name = command.Name,
                 Email = command.Email,
                 ActTyp = command.ActTyp,
                 CCtr = command.CCtr,
-                Photo = command.Photo,
                 Role = "User",
                 Inbox = new Inbox()
             };
+
+            if (command.ProfilePhoto.Length > 0)
+            {
+                using (var memoryStream = new MemoryStream())
+                {
+                    if (memoryStream.Length < 2097152)
+                    {
+                        await command.ProfilePhoto.CopyToAsync(memoryStream);
+                        newUser.Photo = memoryStream.ToArray();
+                    }
+                   
+                }
+            }
 
             newUser.PasswordHash = _passwordHasher.HashPassword(newUser, command.Password);
             await _context.Users.AddAsync(newUser);
@@ -111,11 +130,9 @@ namespace Aplikacja.Repositories.UserRepository
 
         public async Task<bool> DeleteUser(int userId)
         {
-            var myProfile = await _context.Users.SingleAsync(r => r.UserId == userId);
-            if (myProfile is null) throw new BadHttpRequestException("Bad");
+            var resultQuantity = await _context.Users.Where(u => u.UserId == userId).ExecuteDeleteAsync();
+            if (resultQuantity != 1) throw new BadHttpRequestException("Bad");
             await _cache.DeleteRecordAsync<User>($"Profile_{userId}");
-            _context.Remove(myProfile);
-            await _context.SaveChangesAsync();
             return true;
         }
 
@@ -127,26 +144,68 @@ namespace Aplikacja.Repositories.UserRepository
             currentUser.Email = command.Email;
             currentUser.CCtr = command.CCtr;
             currentUser.ActTyp = command.ActTyp;
-            currentUser.Photo = command.Photo;
+            //currentUser.Photo = command.Photo;
 
             await _cache.DeleteRecordAsync<User>($"Profile_{userId}");
             _context.SaveChanges();
             return currentUser;
         }
 
-        public Task<string> ForgotPassword()
+        public async Task<bool> ForgotPassword(string userEmail)
         {
-            throw new NotImplementedException();
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == userEmail);
+
+            if (user is null) throw new BadHttpRequestException("Bad");
+
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            var random = new Random();
+            var newPassword = new string(Enumerable.Repeat(chars, 6).Select(s => s[random.Next(s.Length)]).ToArray());
+
+            user.PasswordHash = _passwordHasher.HashPassword(user, newPassword);
+
+            var email = new MimeMessage();
+            email.From.Add(MailboxAddress.Parse("ellen81@ethereal.email"));
+            email.To.Add(MailboxAddress.Parse(userEmail));
+            email.Subject = "Tekst email sub";
+            email.Body = new TextPart(MimeKit.Text.TextFormat.Html) { Text = newPassword };
+
+            using var smtp = new SmtpClient();
+            smtp.Connect("smtp.ethereal.email",587,SecureSocketOptions.StartTls);
+            smtp.Authenticate("ellen81@ethereal.email", "ZjgDjPpsKN6WaFRrWz");
+            smtp.Send(email);
+            smtp.Disconnect(true);
+            return true;
         }
 
-        public Task<string> ChangePassword()
+        public async Task<bool> ChangePassword(int userId,string oldPassword,string newPassword, string newPasswordRepeat)
         {
-            throw new NotImplementedException();
+            if (newPassword != newPasswordRepeat) throw new BadHttpRequestException("New passwords are not the same");
+
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.UserId == userId);
+
+            if (user is null) throw new BadHttpRequestException("Bad");
+
+            var result = _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, oldPassword);
+
+            if (result == PasswordVerificationResult.Failed) throw new BadHttpRequestException("Bad");
+
+            await _context.Users.Where(u => u.UserId == userId).ExecuteUpdateAsync(
+                s => s.SetProperty(b => b.PasswordHash, b => _passwordHasher.HashPassword(user, newPassword)));
+
+            return true;
         }
 
-        public Task<string> ChangeRole()
+        public async Task<bool> ChangeRole(int userId,string role)
         {
-            throw new NotImplementedException();
+
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.UserId == userId);
+
+            if (user is null) throw new BadHttpRequestException("Bad");
+
+            await _context.Users.Where(u => u.UserId == userId).ExecuteUpdateAsync(
+                s => s.SetProperty(b => b.Role, b => role));
+
+            return true;
         }
     }
 }

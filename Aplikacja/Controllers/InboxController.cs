@@ -2,10 +2,12 @@
 using Aplikacja.Entities.InboxModel;
 using Aplikacja.Repositories.CatRepository;
 using Aplikacja.Repositories.RaportRepository;
+using Aplikacja.Repositories.UserRepository;
 using InboxMicroservice.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Aplikacja.Controllers
 {
@@ -18,9 +20,9 @@ namespace Aplikacja.Controllers
 
         public InboxController(IInboxRepository inboxRepository, ICatRepository catRepository, IRaportRepository raportRepository)
         {
-            _inboxRepository = inboxRepository;
-            _catRepository = catRepository;
-            _raportRepository = raportRepository;
+            _inboxRepository = inboxRepository ?? throw new ArgumentNullException(nameof(inboxRepository));
+            _catRepository = catRepository ?? throw new ArgumentNullException(nameof(catRepository));
+            _raportRepository = raportRepository ?? throw new ArgumentNullException(nameof(raportRepository));
         }
 
         [HttpGet]
@@ -31,15 +33,15 @@ namespace Aplikacja.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<InboxItem>> UpdateInboxItem([FromRoute] int inboxItemId)
+        public async Task<ActionResult<InboxItemDTO>> UpdateInboxItem([FromRoute] int inboxItemId)
         {
-            InboxItem myInboxItem = await _inboxRepository.GetMyInboxItem(inboxItemId);
+            InboxItemDTO myInboxItem = await _inboxRepository.GetMyInboxItem(inboxItemId);
             return Ok(myInboxItem);
         }
 
         [HttpPost]
-        public async Task<ActionResult<InboxItem>> UpdateInboxItem([FromForm] UpdateInboxItemDto updateInboxItemDto,int inboxItemId,int entryDate)
-        {
+        public async Task<ActionResult<InboxItem>> UpdateInboxItem([FromForm] UpdateInboxItemDto updateInboxItemDto,int inboxItemId,DateTime entryDate)
+        {       
             var authenticatedId = int.Parse(User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value);
             await _inboxRepository.UpdateInboxItem(updateInboxItemDto, inboxItemId);
             var catItem = await _catRepository.CreateCat(authenticatedId, inboxItemId,entryDate);

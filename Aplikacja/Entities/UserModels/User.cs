@@ -13,15 +13,9 @@ namespace Aplikacja.Entities.UserModel
         public string? CCtr { get; set; }
         public string? ActTyp { get; set; }
         public string? Role { get; set; }
-        public string? Photo { get; set; }
+        public byte[]? Photo { get; set; }
         public Inbox Inbox { get; set; }
         public List<Cat>? Cats { get; set; }
         public List<UserRaport>? UserRaports { get; set; }
-        //public User()
-        //{
-        //    this.Inbox = new Inbox();
-        //    this.Cats = new List<Cat>();
-        //    this.UserRaports = new List<UserRaport>();
-        //}
     }
 }

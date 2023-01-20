@@ -77,24 +77,7 @@ namespace Aplikacja.Models
                     Email = "dawid@tlen.pl",
                     CCtr = "RS8531",
                     ActTyp = "L8531",
-                    Role = "Admin",
-                    Photo = "zdjecie",
-                    //Inbox = new Inbox()
-                    //{
-
-                    //    InboxItems = new List<InboxItem>()
-                    //    {
-                    //        new InboxItem()
-                    //        {
-
-                    //            JobId = 1,
-                    //            Hours = 2,
-                    //            Components = 0,
-                    //            DrawingsComponents = 0,
-                    //            DrawingsAssembly = 0,
-                    //        }
-                    //    }
-                    //}
+                    Role = "Admin"
                 },
                 new User
                 {
@@ -105,22 +88,6 @@ namespace Aplikacja.Models
                     CCtr = "RS8531",
                     ActTyp = "L8531",
                     Role = "Manager",
-                    Photo = "zdjecie",
-                    //Inbox = new Inbox()
-                    //{
-                    //    UserId = 2,
-                    //    InboxItems = new List<InboxItem>()
-                    //    {
-                    //        new InboxItem()
-                    //        {
-                    //            JobId = 1,
-                    //            Hours = 2,
-                    //            Components = 0,
-                    //            DrawingsComponents = 0,
-                    //            DrawingsAssembly = 0,
-                    //        }
-                    //    }
-                    //}
                 }
             );
             //modelBuilder.Entity<Raport>().HasData(

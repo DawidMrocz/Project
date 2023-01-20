@@ -7,7 +7,7 @@ namespace Aplikacja.Repositories.RaportRepository
     {
 
         public Task<RaportDTO> GetRaport(int raportId);
-        public Task<List<Raport>> GetRaports();
+        public Task<List<RaportDTO>> GetRaports();
         public Task<UserRaport> CreateRaport(int userId, double hours,int inboxItemId);
         public Task<bool> DeleteRaport(int userId, double hours, int inboxItemId);
 

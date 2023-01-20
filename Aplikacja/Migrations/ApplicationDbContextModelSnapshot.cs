@@ -365,8 +365,8 @@ namespace Aplikacja.Migrations
                     b.Property<string>("PasswordHash")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Photo")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<byte[]>("Photo")
+                        .HasColumnType("varbinary(max)");
 
                     b.Property<string>("Role")
                         .ValueGeneratedOnAdd()
@@ -386,7 +386,6 @@ namespace Aplikacja.Migrations
                             Email = "dawid@tlen.pl",
                             Name = "Dawid",
                             PasswordHash = "zxcasdqwe",
-                            Photo = "zdjecie",
                             Role = "Admin"
                         },
                         new
@@ -397,7 +396,6 @@ namespace Aplikacja.Migrations
                             Email = "agata@tlen.pl",
                             Name = "Agata",
                             PasswordHash = "zxcasdqwe",
-                            Photo = "zdjecie",
                             Role = "Manager"
                         });
                 });

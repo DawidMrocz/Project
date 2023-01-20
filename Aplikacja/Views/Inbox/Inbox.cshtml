@@ -1,4 +1,4 @@
-﻿@model Aplikacja.Entities.InboxModel.Inbox
+﻿@model Aplikacja.DTOS.InboxDtos.InboxDTO
 @{
     ViewData["Title"] = "Privacy Page";
 }
@@ -7,9 +7,26 @@
     <link rel="stylesheet" href="~/css/Inbox.css" asp-append-version="true" />
 </head>
 
-    <div class="Inbox">
+
+
+<button data-modal-target="#modal">Open Modal</button>
+<div class="modal" id="modal">
+    <div class="modal-header">
+        <div class="title">Example Modal</div>
+        <button data-close-button class="close-button">&times;</button>
+    </div>
+    <div class="modal-body">
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Esse quod alias ut illo doloremque eum ipsum obcaecati distinctio debitis reiciendis quae quia soluta totam doloribus quos nesciunt necessitatibus, consectetur quisquam accusamus ex, dolorum, dicta vel? Nostrum voluptatem totam, molestiae rem at ad autem dolor ex aperiam. Amet assumenda eos architecto, dolor placeat deserunt voluptatibus tenetur sint officiis perferendis atque! Voluptatem maxime eius eum dolorem dolor exercitationem quis iusto totam! Repudiandae nobis nesciunt sequi iure! Eligendi, eius libero. Ex, repellat sapiente!
+    </div>
+</div>
+<div id="overlay"></div>
+
+
+<div class="Inbox">
         <div class="InboxTab">
-        <div>@Model.User.Name</div>
+            
+            <div ><img src="data:image/jpg;base64,@Convert.ToBase64String(Model.Photo)" class="InboxProfilePhoto" alt="Dont work"></div>
+            <div>@Model.Name</div>
         </div>
         <div class="InboxList">
         @foreach (var obj in Model.InboxItems)
@@ -17,32 +34,149 @@
             <form method="post" action="UpdateInboxItem">
                 <input type="hidden" name="inboxItemId" value="@obj.InboxItemId" class="form-control">
                 <div class="InboxListCard">
-                    <div class="InboxListCardStatus">Status  <input type="text" value="@obj.Job.Status" class="form-control" name="Status"></div>
-                    <div class="InboxListCardStatus">Entry date  <input type="text"  class="form-control" name="entryDate"></div>
+                    <div class="InboxListCardStatus">Status</div>
                     <div class="InboxListCardInfos">
-                        <div>@obj.Job.JobDescription</div>
+                        <div class="InboxListCardTitles">
+                            <div>
+                                <div><b>@obj.JobDescription</b></div>
+                            </div>
+                            <div>
+                                <div><b>30154676</b></div>
+                            </div>
+                            <div>
+                                <div><b>01</b></div>
+                            </div>
+                        </div>
+                        <div class="InboxListCardDescriptions2">
+                            <div>
+                                <div>Created 3D :</div>
+                                <div>03</div>
+                            </div>
+                            <div>
+                                <div>Comp. Drawing :</div>
+                                <div>05</div>
+                            </div>
+                            <div>
+                                <div>Assy Drawing :</div>
+                                <div>01</div>
+                            </div>
+                            <div>
+                                <div>Hours :</div>
+                                <div>01</div>
+                            </div>
+                        </div>
+                        <div class="InboxListCardDescriptions">
+                            <div>
+                                <div><i>Started :</i></div>
+                                <div><i>22.12.2020</i></div>
+                            </div>
+                            <div>
+                                <div>Finished :</div>
+                                <div>11.10.2022</div>
+                            </div>
+                            <div>
+                                <div>Predicted :</div>
+                                <div>11.10.2022</div>
+                            </div>
+                        </div>
+                        <div class="InboxListCardOptions">
+                            <div><button type="button" class="button-62" data-toggle="modal" data-target="#exampleModal" data-whatever="@obj.JobDescription">Update</button></div>
+                            <div><button class="button-62" role="button"> Button 62</button></div>
+                            <div><button class="button-62" role="button"> Button 62</button></div>
+                            <div><button class="button-62" role="button"> Button 62</button></div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+            }
+        </div>
+    </div>
+
+
+
+    @section Scripts {
+    <script>
+        const openModalButtons = document.querySelectorAll('[data-modal-target]')
+        const closeModalButtons = document.querySelectorAll('[data-close-button]')
+        const overlay = document.getElementById('overlay')
+
+        openModalButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const modal = document.querySelector(button.dataset.modalTarget)
+                openModal(modal)
+            })
+        })
+
+        overlay.addEventListener('click', () => {
+            const modals = document.querySelectorAll('.modal.active')
+            modals.forEach(modal => {
+                closeModal(modal)
+            })
+        })
+
+        closeModalButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const modal = button.closest('.modal')
+                closeModal(modal)
+            })
+        })
+
+        function openModal(modal) {
+            if (modal == null) return
+            modal.classList.add('active')
+            overlay.classList.add('active')
+        }
+
+        function closeModal(modal) {
+            if (modal == null) return
+            modal.classList.remove('active')
+            overlay.classList.remove('active')
+        }
+    </script>
+    }
+
+
+    
+
+
+    @*<div class="Inbox">
+        <div class="InboxTab">
+        <div>@Model.Name</div>
+        <div><img src="data:image/jpg;base64,@Convert.ToBase64String(Model.Photo)" style="max-width:100px;max-height:100px" alt="Dont work"></div>
+        
+        </div>
+        <div class="InboxList">
+        @foreach (var obj in Model.InboxItems)
+        {
+            <form method="post" action="UpdateInboxItem">
+                <input type="hidden" name="inboxItemId" value="@obj.InboxItemId" class="form-control">
+                <div class="InboxListCard">
+                    <div class="InboxListCardStatus">Status  <input type="text" value="@obj.Status" class="form-control" name="Status"></div>
+                    <div class="InboxListCardStatus">Entry date  <input type="date"  class="form-control" name="entryDate"></div>
+                    <div class="InboxListCardInfos">
+                        <div>@obj.JobDescription</div>
                         <div>
                             <div>Ecm:</div>
-                            <div>@obj.Job.Ecm</div>
+                            <div>@obj.Ecm</div>
                         </div>
                         <div>
                             <div>Task:</div>
-                            <div>@obj.Job.Gpdm</div>
+                            <div>@obj.Gpdm</div>
                         </div>
                     </div>
                     <div class="InboxListCardDates">
 
                         <div>
                             <div>Started:</div>
-                            <div><input type="text" value="@obj.Job.Started" class="form-control" name="Started"></div>
+                            <div><input type="date" value="@obj.Started" class="form-control" name="Started"></div>
                         </div>
                         <div>
                             <div>Finished:</div>
-                            <div><input type="text" value="@obj.Job.Finished" class="form-control" name="Finished"></div>
+                            <div><input type="date" value="@obj.Finished" class="form-control" name="Finished"></div>
                         </div>
                         <div>
                             <div>Predicted:</div>
-                            <div><input type="text" value="@obj.WhenComplete" class="form-control" name="WhenComplete"></div>
+                            <div><input type="date" value="@obj.WhenComplete" class="form-control" name="WhenComplete"></div>
                         </div>
                     </div>
                     <div class="InboxListCardCad">
@@ -72,11 +206,6 @@
             </form>
             }
         </div>
-        
-        @*<h1>@obj.Hours</h1>
-
-        <h1>@obj.Components</h1>
-        <h1>@obj.Job.Client</h1>*@
-    </div>
+    </div>*@
     
 

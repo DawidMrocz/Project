@@ -18,8 +18,8 @@ namespace Aplikacja.Controllers
 
         public HomeController(IJobRepository jobRepository, IUserRepository userRepository)
         {
-            _jobRepository = jobRepository;
-            _userRepository = userRepository;
+            _jobRepository = jobRepository ?? throw new ArgumentNullException(nameof(userRepository));
+            _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
         }
 
         [HttpGet]
@@ -40,18 +40,14 @@ namespace Aplikacja.Controllers
         [HttpPost]
         public async Task<ActionResult<Job>> Create(Job job)
         {
-            if (ModelState.IsValid)
-            {
-                if (job.JobId == 0)
-                {
+           
+               
                     await _jobRepository.CreateJob(job);
-                }
-                else
+              
                     //await _jobRepository.UpdateJob(job,job.JobId);
 
-                return RedirectToAction(nameof(Index));
-            }
-            return View(job);
+                return RedirectToAction("Index", "Home");
+
         }
 
         [HttpPost]
