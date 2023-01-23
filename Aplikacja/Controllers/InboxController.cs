@@ -1,13 +1,12 @@
 ﻿using Aplikacja.DTOS.InboxDtos;
+using Aplikacja.DTOS.UserDtos;
 using Aplikacja.Entities.InboxModel;
 using Aplikacja.Repositories.CatRepository;
 using Aplikacja.Repositories.RaportRepository;
-using Aplikacja.Repositories.UserRepository;
 using InboxMicroservice.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Aplikacja.Controllers
 {
@@ -26,33 +25,34 @@ namespace Aplikacja.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<Inbox>> Inbox()
+        public async Task<ActionResult<UserDto>> Inbox()
         {
-            var myInbox = await _inboxRepository.GetMyInbox(int.Parse(User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value));
+            var myInbox = await _inboxRepository.GetMyInbox(Guid.Parse(User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value));
             return View(myInbox);
         }
 
         [HttpGet]
-        public async Task<ActionResult<InboxItemDTO>> UpdateInboxItem([FromRoute] int inboxItemId)
+        public async Task<ActionResult<InboxItemDTO>> UpdateInboxItem([FromRoute] Guid inboxItemId)
         {
             InboxItemDTO myInboxItem = await _inboxRepository.GetMyInboxItem(inboxItemId);
             return Ok(myInboxItem);
         }
 
         [HttpPost]
-        public async Task<ActionResult<InboxItem>> UpdateInboxItem([FromForm] UpdateInboxItemDto updateInboxItemDto,int inboxItemId,DateTime entryDate)
+        public async Task<ActionResult<InboxItem>> UpdateInboxItem([FromForm] UpdateInboxItemDto updateInboxItemDto,Guid inboxItemId,DateTime entryDate)
         {       
-            var authenticatedId = int.Parse(User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value);
+            var authenticatedId = Guid.Parse(User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value);
+
             await _inboxRepository.UpdateInboxItem(updateInboxItemDto, inboxItemId);
             var catItem = await _catRepository.CreateCat(authenticatedId, inboxItemId,entryDate);
-            await _raportRepository.CreateRaport(authenticatedId, catItem, inboxItemId);
+            await _raportRepository.CreateRaport(authenticatedId, catItem, inboxItemId, entryDate);
             return RedirectToAction("Inbox", "Inbox");
         }
 
         [HttpDelete]
-        public async Task<ActionResult<bool>> DeleteInboxItem([FromRoute] int inboxItemId)
+        public async Task<ActionResult<bool>> DeleteInboxItem([FromRoute] Guid inboxItemId)
         {
-            bool myInboxItem = await _inboxRepository.DeleteInboxItem(int.Parse(User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value), inboxItemId);
+            bool myInboxItem = await _inboxRepository.DeleteInboxItem(Guid.Parse(User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value), inboxItemId);
 
             return Ok(true);
         }

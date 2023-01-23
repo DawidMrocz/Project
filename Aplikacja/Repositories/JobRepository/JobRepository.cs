@@ -3,7 +3,6 @@ using Aplikacja.Entities.InboxModel;
 using Aplikacja.Entities.JobModel;
 using Aplikacja.Extensions;
 using Aplikacja.Models;
-using Aplikacja.Repositories.UserRepository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
 
@@ -24,34 +23,25 @@ namespace Aplikacja.Repositories.JobRepository
         {
             return await _context.Jobs.ToListAsync();
         }
-        public async Task<bool> AddToInbox(int jobId, int userId)
+        public async Task<Task> AddToInbox(int jobId, Guid userId)
         {
-
-            var itemToAdd = await _context.Jobs.SingleAsync(j => j.JobId == jobId);
-
-            if (itemToAdd == null) throw new BadHttpRequestException("Job does not exist");
-
-            var userInbox = await _context.Inboxs.SingleAsync(i => i.UserId == userId);
-
-            var itemInUserInbox = await _context.InboxItems.AnyAsync(u => u.InboxId == userInbox.InboxId && u.JobId == itemToAdd.JobId);
-
-            if(itemInUserInbox) throw new BadHttpRequestException("Job is already in inbox");
-
-            InboxItem newInboxItem = new InboxItem()
+            InboxItem? inboxItem = await _context.InboxItems.FirstOrDefaultAsync(j => j.JobId == jobId && j.UserId == userId);
+            
+            if(inboxItem is null)
             {
-                Hours = 0,
-                Components = 0,
-                DrawingsComponents = 0,
-                DrawingsAssembly = 0,
-                WhenComplete = "IDK",
-                JobId = itemToAdd.JobId,
-                InboxId = userInbox.InboxId
-            };
-
-            await _context.InboxItems.AddAsync(newInboxItem);
-            await _context.SaveChangesAsync();
-   
-            return true;
+                inboxItem = new InboxItem()
+                {
+                    Hours = 0,
+                    Components = 0,
+                    DrawingsComponents = 0,
+                    DrawingsAssembly = 0,
+                    JobId = jobId,
+                    UserId = userId
+                };
+                await _context.InboxItems.AddAsync(inboxItem);
+                await _context.SaveChangesAsync();
+            }
+            return Task.CompletedTask;
         }
 
         public async Task<Job> GetJob(int Id)
@@ -92,7 +82,7 @@ namespace Aplikacja.Repositories.JobRepository
             return true;
         }
 
-        public async Task<Job> UpdateJob(UpdateJobDto updatedJob,int jobId)
+        public async Task<Job> UpdateJob(UpdateJobDto updatedJob, int jobId)
         {
             var currentTask = await _context.Jobs.SingleAsync(r => r.JobId == jobId);
 

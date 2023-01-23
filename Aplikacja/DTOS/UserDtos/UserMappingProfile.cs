@@ -1,5 +1,7 @@
 ﻿
 
+using Aplikacja.DTOS.InboxDtos;
+using Aplikacja.Entities.InboxModel;
 using Aplikacja.Entities.UserModel;
 using AutoMapper;
 
@@ -10,6 +12,7 @@ namespace Aplikacja.DTOS.UserDtos
         public UserMappingProfile()
         {
             CreateMap<User, UserDto>();
+            CreateMap<InboxItem, InboxItemDTO>();
         }
     }
 }

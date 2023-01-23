@@ -1,5 +1,7 @@
 ﻿using Aplikacja.DTOS.CatDto;
+using Aplikacja.DTOS.UserDtos;
 using Aplikacja.Entities.CatModels;
+using Aplikacja.Entities.InboxModel;
 using Aplikacja.Models;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
@@ -23,85 +25,78 @@ namespace Aplikacja.Repositories.CatRepository
                 _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
-            public async Task<CatDTO> GetCat(int catId)
+            public async Task<UserDto> GetCat(Guid userId)
             {
-                var cat = await _context.Cats
-                    .Include(r => r.User)
+                var cat = await _context.Users
                     .Include(r => r.CatRecords)
                     .ThenInclude(h => h.CatRecordHours)
-                    .ProjectTo<CatDTO>(_mapper.ConfigurationProvider)
+                    .ProjectTo<UserDto>(_mapper.ConfigurationProvider)
                     .AsNoTracking()
-                    .SingleAsync(c => c.CatId == catId);
+                    .SingleAsync(c => c.UserId == userId);
 
                 return cat;
             }
 
-        public async Task<List<Cat>> GetCats()
+        public async Task<List<CatRecord>> GetCats()
         {
-            return await _context.Cats.AsNoTracking().OrderBy(d => d.CatCreated).ToListAsync();
+            return await _context.CatRecords.AsNoTracking().OrderBy(y => y.Year).ThenBy(m => m.Month).ToListAsync();
         }
 
-        public async Task<double> CreateCat(int userId, int inboxItemId,DateTime entryDate)
+        public async Task<double> CreateCat(Guid userId, Guid inboxItemId,DateTime entryDate)
         {
-            Cat? userCat;
-            var catUser = await _context.Users.SingleAsync(u => u.UserId == userId);
-            var catExist = await _context.Cats.AnyAsync(u => u.UserId == catUser.UserId && u.CatCreated == entryDate.ToString("yyyy MM"));
-            if (catExist)
+            InboxItem? inboxItem = await _context.InboxItems.Include(j => j.Job).FirstOrDefaultAsync(r => r.InboxItemId == inboxItemId);
+            
+            CatRecord? userCatRecord = await _context.CatRecords.FirstOrDefaultAsync(u => u.UserId == userId && u.Year == entryDate.Year && u.Month == entryDate.Month);
+  
+            if (userCatRecord is null)
             {
-                userCat = await _context.Cats.SingleAsync(u => u.UserId == catUser.UserId && u.CatCreated == entryDate.ToString("yyyy MM"));
-            }
-            else
-            {
-                userCat = new Cat()
+                userCatRecord = new CatRecord()
                 {
-                    CatCreated = entryDate.ToString("yyyy MM"),
-                    UserId = catUser.UserId,
-                };
-                await _context.Cats.AddAsync(userCat);
-                await _context.SaveChangesAsync();
-            }
-
-            var inboxItem = await _context.InboxItems.Include(j => j.Job).SingleAsync(r => r.InboxItemId == inboxItemId);
-
-            CatRecord? catRecord;
-            bool recordExist = await _context.CatRecords.AnyAsync(r => r.InboxItemId == inboxItemId);
-            if (recordExist)
-            {
-                catRecord = await _context.CatRecords.SingleAsync(r => r.InboxItemId == inboxItemId);
-            }
-            else
-            {
-                catRecord = new CatRecord()
-                {
-                    CatId = userCat.CatId,
+                    Year = entryDate.Year,
+                    Month = entryDate.Month,
+                    UserId = userId,
                     InboxItemId = inboxItemId,
-                    Receiver = "RECEIVER DEPEND",
-                    SapText = $"NA_{inboxItem.Job.ProjectNumber}_{inboxItem.Job.Client}_{inboxItem.Job.ProjectName}",
+                    SapText = $"{inboxItem.Job.Region}_{inboxItem.Job.ProjectNumber}_{inboxItem.Job.Client}_{inboxItem.Job.ProjectName}",
                 };
-                await _context.CatRecords.AddAsync(catRecord);
-                await _context.SaveChangesAsync();
 
+                switch (userCatRecord.InboxItem.Job.Region)
+                {
+                    case "NA":
+                        userCatRecord.Receiver = "RECIVE FOR NA";
+                        break;
+
+                    case "CN":
+                        userCatRecord.Receiver = "RECIVE FOR CN";
+                        break;
+
+                    case "IN":
+                        userCatRecord.Receiver = "RECIVE FOR IN";
+                        break;
+
+                    default:
+                        userCatRecord.Receiver = "RECIVE FOR RYB";
+                        break;
+                }
+
+                await _context.CatRecords.AddAsync(userCatRecord);
+                await _context.SaveChangesAsync();
             }
 
-            CatRecordHours? catRecordHour;
-            bool hoursExits = await _context
+            CatRecordHours? catRecordHour = await _context
                 .CatRecordHourss
-                .AnyAsync(c => c.CatRecordId == catRecord.CatRecordId
-                && c.Day == entryDate.Day);
+                .FirstOrDefaultAsync(c => c.CatRecordId == userCatRecord.CatRecordId
+                    && c.Day == entryDate.Day);
 
-            if (hoursExits)
+
+            if (catRecordHour is not null)
             {
-                catRecordHour = await _context
-                .CatRecordHourss
-                .SingleAsync(c => c.CatRecordId == catRecord.CatRecordId
-                && c.Day == entryDate.Day);
                 catRecordHour.Hours = inboxItem.Hours;
             }
             else
             {
                 catRecordHour = new CatRecordHours()
                 {
-                    CatRecordId = catRecord.CatRecordId,
+                    CatRecordId = userCatRecord.CatRecordId,
                     Hours = inboxItem.Hours,
                     Day = entryDate.Day
                 };
@@ -109,19 +104,19 @@ namespace Aplikacja.Repositories.CatRepository
             }
             await _context.SaveChangesAsync();
             double sumOfHours = await _context.CatRecordHourss
-                .Where(r => r.CatRecordId == catRecord.CatRecordId)
+                .Where(r => r.CatRecordId == userCatRecord.CatRecordId)
                 .SumAsync(h => h.Hours);
             return sumOfHours;
         }
 
-        public async Task<double> DeleteCat(int inboxItemId, DateTime entryDate)
+        public async Task<double> DeleteCat(Guid inboxItemId, DateTime entryDate)
         {
-            CatRecord catRecord = await _context.CatRecords.SingleAsync(r => r.InboxItemId == inboxItemId);
+            CatRecord? catRecord = await _context.CatRecords.FirstOrDefaultAsync(r => r.InboxItemId == inboxItemId);
 
             if (catRecord is null) throw new BadHttpRequestException("Cat not found");
 
-            CatRecordHours catRecordHour = await _context.CatRecordHourss
-                .SingleAsync(h => h.CatRecordId == catRecord.CatRecordId &&
+            CatRecordHours? catRecordHour = await _context.CatRecordHourss
+                .FirstOrDefaultAsync(h => h.CatRecordId == catRecord.CatRecordId &&
                 h.Day == entryDate.Day);
             _context.CatRecordHourss.Remove(catRecordHour);
             await _context.SaveChangesAsync();
@@ -131,10 +126,5 @@ namespace Aplikacja.Repositories.CatRepository
                 .SumAsync(h => h.Hours);
             return sumOfHours;
         }
-
-
-
-
-    }
-    
+    }   
 }

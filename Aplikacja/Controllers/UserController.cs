@@ -28,7 +28,7 @@ namespace Aplikacja.Controllers
         {
             try
             {
-                UserDto profile = await _userRepository.GetProfile(int.Parse(User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value));
+                UserDto profile = await _userRepository.GetProfile(Guid.Parse(User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value));
                 return View(profile);
             }
             catch (Exception ex)
@@ -51,7 +51,7 @@ namespace Aplikacja.Controllers
         {
             try
             {
-                bool profileDeleted = await _userRepository.DeleteUser(int.Parse(User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value));
+                bool profileDeleted = await _userRepository.DeleteUser(Guid.Parse(User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value));
                 return profileDeleted;
             }
             catch (Exception ex)
@@ -65,7 +65,7 @@ namespace Aplikacja.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<User>> UpdateUser([FromBody] UpdateDto updateUser)
         {
-            int userId = int.Parse(User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value);
+            var userId = Guid.Parse(User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value);
             try
             {
                 User newUser = await _userRepository.UpdateUser(updateUser, userId);

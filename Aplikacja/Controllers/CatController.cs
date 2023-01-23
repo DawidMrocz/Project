@@ -1,4 +1,5 @@
 ﻿using Aplikacja.DTOS.CatDto;
+using Aplikacja.DTOS.UserDtos;
 using Aplikacja.Entities.CatModels;
 using Aplikacja.Repositories.CatRepository;
 using Aplikacja.Repositories.UserRepository;
@@ -21,16 +22,16 @@ namespace Aplikacja.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<CatDTO>> Cat(int id)
+        public async Task<ActionResult<UserDto>> Cat(Guid id)
         {
-            CatDTO myCat = _mapper.Map<CatDTO>(await _catRepository.GetCat(id));
+            var myCat = _mapper.Map<UserDto>(await _catRepository.GetCat(id));
             return View(myCat);
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<CatDTO>>> Cats()
+        public async Task<ActionResult<List<CatRecordDTO>>> Cats()
         {
-            List<CatDTO> myCats = _mapper.Map<List<CatDTO>>(await _catRepository.GetCats());
+            var myCats = _mapper.Map<List<CatRecordDTO>>(await _catRepository.GetCats());
             return View(myCats);
         }
     }

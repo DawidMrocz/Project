@@ -1,5 +1,6 @@
 ﻿
 using Aplikacja.DTOS.InboxDtos;
+using Aplikacja.DTOS.UserDtos;
 using Aplikacja.Entities.InboxModel;
 
 namespace InboxMicroservice.Repositories
@@ -7,11 +8,11 @@ namespace InboxMicroservice.Repositories
     public interface IInboxRepository
     {
 
-        public Task<InboxDTO> GetMyInbox(int userId);
-        public Task<InboxItemDTO> GetMyInboxItem(int inboxItemId);
+        public Task<UserDto> GetMyInbox(Guid userId);
+        public Task<InboxItemDTO> GetMyInboxItem(Guid inboxItemId);
 
-        public Task<bool> DeleteInboxItem(int userId, int inboxItemId);
-        public Task<InboxItemDTO> UpdateInboxItem(UpdateInboxItemDto updateInboxItemDto,int inboxItemId);
+        public Task<bool> DeleteInboxItem(Guid userId, Guid inboxItemId);
+        public Task<InboxItemDTO> UpdateInboxItem(UpdateInboxItemDto updateInboxItemDto,Guid inboxItemId);
 
 
  

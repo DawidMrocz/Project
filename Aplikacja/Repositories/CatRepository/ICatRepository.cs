@@ -1,4 +1,5 @@
 ﻿using Aplikacja.DTOS.CatDto;
+using Aplikacja.DTOS.UserDtos;
 using Aplikacja.Entities.CatModels;
 
 namespace Aplikacja.Repositories.CatRepository
@@ -6,11 +7,9 @@ namespace Aplikacja.Repositories.CatRepository
     public interface ICatRepository
     {
 
-        public Task<CatDTO> GetCat(int catId);
-        public Task<List<Cat>> GetCats();
-
-        public Task<double> CreateCat(int userId, int inboxItemId, DateTime date);
-
-        public Task<double> DeleteCat(int inboxItemId, DateTime date);
+        public Task<UserDto> GetCat(Guid catId);
+        public Task<List<CatRecord>> GetCats();
+        public Task<double> CreateCat(Guid userId, Guid inboxItemId, DateTime date);
+        public Task<double> DeleteCat(Guid inboxItemId, DateTime date);
     }
 }

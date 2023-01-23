@@ -1,4 +1,5 @@
 ﻿using Aplikacja.DTOS.InboxDtos;
+using Aplikacja.DTOS.UserDtos;
 using Aplikacja.Extensions;
 using Aplikacja.Models;
 using AutoMapper;
@@ -22,27 +23,26 @@ namespace InboxMicroservice.Repositories
         }
 
         [Benchmark]
-        public async Task<InboxDTO> GetMyInbox(int userId)
+        public async Task<UserDto> GetMyInbox(Guid userId)
         {
 
-            InboxDTO? myInbox = await _cache.GetRecordAsync<InboxDTO>($"Inbox_{userId}");
+            UserDto? myInbox = await _cache.GetRecordAsync<UserDto>($"Profile_{userId}");
             if (myInbox is null)
             {
-                myInbox = await _context.Inboxs
-                .Include(u => u.User)
+                myInbox = await _context.Users
                 .Include(i => i.InboxItems)
                 .ThenInclude(j => j.Job)
-                .ProjectTo<InboxDTO>(_mapper.ConfigurationProvider)
+                .ProjectTo<UserDto>(_mapper.ConfigurationProvider)
                 .AsNoTracking()
                 .SingleAsync(i => i.UserId == userId);
    
                 if (myInbox is null) throw new BadHttpRequestException("Inbox don't exist");
-                await _cache.SetRecordAsync($"Inbox_{userId}", myInbox);
+                await _cache.SetRecordAsync($"Profile_{userId}", myInbox);
             }
             return myInbox;
         }
 
-        public async Task<InboxItemDTO> GetMyInboxItem(int inboxItemId)
+        public async Task<InboxItemDTO> GetMyInboxItem(Guid inboxItemId)
         {
             var myInboxItem = await _context.InboxItems
                 .Include(j => j.Job)
@@ -53,7 +53,7 @@ namespace InboxMicroservice.Repositories
             return myInboxItem;
         }
 
-        public async Task<InboxItemDTO> UpdateInboxItem(UpdateInboxItemDto updateInboxItemDto, int inboxItemId)
+        public async Task<InboxItemDTO> UpdateInboxItem(UpdateInboxItemDto updateInboxItemDto, Guid inboxItemId)
         {
             var inboxItem = await _context.InboxItems.Include(j => j.Job).SingleAsync(i => i.InboxItemId == inboxItemId);
             if (inboxItem is null) throw new BadHttpRequestException("Item not found!");
@@ -61,18 +61,17 @@ namespace InboxMicroservice.Repositories
             inboxItem.Components = updateInboxItemDto.Components;
             inboxItem.DrawingsComponents = updateInboxItemDto.DrawingsComponents;
             inboxItem.DrawingsAssembly = updateInboxItemDto.DrawingsAssembly;
-            inboxItem.WhenComplete = updateInboxItemDto.WhenComplete;
             inboxItem.Job.Started = updateInboxItemDto.Started;
             inboxItem.Job.Finished = updateInboxItemDto.Finished;
             inboxItem.Hours = updateInboxItemDto.Hours;
-            inboxItem.Job.Status = updateInboxItemDto.Status;
+            inboxItem.Job.Status = updateInboxItemDto.Status is not null ? updateInboxItemDto.Status : inboxItem.Job.Status;
             await _context.SaveChangesAsync();
             return _mapper.Map<InboxItemDTO>(inboxItem);
         }
 
-        public async Task<bool> DeleteInboxItem(int userId,int jobId)
+        public async Task<bool> DeleteInboxItem(Guid userId, Guid inboxItemId)
         {
-            var deletedResults = await _context.InboxItems.Include(j => j.Job).Where(i => i.JobId == jobId).ExecuteDeleteAsync();
+            var deletedResults = await _context.InboxItems.Where(i => i.InboxItemId == inboxItemId).ExecuteDeleteAsync();
             if (deletedResults != 1) throw new BadHttpRequestException("Request did not succeed");
             return true;
         }  

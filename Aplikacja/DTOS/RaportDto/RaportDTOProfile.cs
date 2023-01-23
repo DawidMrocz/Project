@@ -8,7 +8,7 @@ namespace Aplikacja.DTOS.RaportDto
         public RaportDTOProfile()
         {
             CreateMap<Raport, RaportDTO>();
-            CreateMap<UserRaport, UserRaportDTO>();    
+            CreateMap<UserRaportRecord, UserRaportRecordDTO>();    
         }
     }
 }

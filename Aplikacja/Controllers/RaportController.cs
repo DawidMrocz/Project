@@ -18,7 +18,7 @@ namespace Aplikacja.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<RaportDTO>> Raport([FromRoute] int id)
+        public async Task<ActionResult<RaportDTO>> Raport([FromRoute] Guid id)
         {
             RaportDTO myRaport = await _raportRepository.GetRaport(id);
             return View(myRaport);

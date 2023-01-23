@@ -21,18 +21,19 @@ namespace Aplikacja.Repositories.RaportRepository
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
-        public async Task<RaportDTO> GetRaport(int raportId)
+        public async Task<RaportDTO> GetRaport(Guid raportId)
         {
             RaportDTO? raport = await _cache.GetRecordAsync<RaportDTO>($"Raport_{raportId}");
             if (raport is null)
             {
+
                 raport = _mapper.Map<RaportDTO>(await _context.Raports
-                    .Include(a => a.UserRaports)
-                    .ThenInclude(b => b.UserRaportRecords)
-                    .ThenInclude(c => c.InboxItem)
-                    .ThenInclude(d => d.Job)
+                    .Include(r => r.UserRaportRecords)
+                    .ThenInclude(u => u.User)
+                    .ThenInclude(j => j.InboxItems)
                     .AsNoTracking()
-                    .SingleAsync(r => r.RaportId == raportId));
+                    .FirstOrDefaultAsync(r => r.RaportId == raportId));
+
                 if (raport is null) throw new BadHttpRequestException("Bad request");
                 await _cache.SetRecordAsync($"Raport_{raportId}", raport);
             }
@@ -46,7 +47,8 @@ namespace Aplikacja.Repositories.RaportRepository
             {
                 raports = await _context.Raports
                     .AsNoTracking()
-                    .OrderBy(c => c.Created)
+                    .OrderBy(y => y.Year)
+                    .ThenBy(m => m.Month)
                     .ProjectTo<RaportDTO>(_mapper.ConfigurationProvider)
                     .ToListAsync();
                 if (raports is null) throw new BadHttpRequestException("Bad request");
@@ -55,92 +57,82 @@ namespace Aplikacja.Repositories.RaportRepository
             return raports;
         }
 
-        public async Task<UserRaport> CreateRaport(int userId, double hours, int inboxItemId)
+        public async Task<Raport> CreateRaport(Guid userId, double hours, Guid inboxItemId,DateTime entryDate)
         {
-            string currentDate = DateTime.Now.ToString("yyyy MM");
-            Raport? raport;
-            bool raportExist = await _context.Raports.AnyAsync<Raport>(r => r.Created == currentDate);
-            if (raportExist)
-            {
-                raport = await _context.Raports.SingleAsync<Raport>(r => r.Created == currentDate);
-            }
-            else
+            Raport? raport = await _context.Raports.FirstOrDefaultAsync(r => r.Year == entryDate.Year && r.Month == entryDate.Month);
+
+            if (raport is null)
             {
                 raport = new Raport()
                 {
-                    TotalHours = 0,
-                    Created = DateTime.Now.ToString("yyyy MM"),
+                    Month = entryDate.Month,
+                    Year = entryDate.Year,
                 };
                 await _context.Raports.AddAsync(raport);
                 await _context.SaveChangesAsync();
             }
-            UserRaport? myUserRaport;
-            bool myUserRaportExist = await _context.UserRaports.AnyAsync(uR => uR.RaportId == raport.RaportId && uR.UserId == userId);
-            if (myUserRaportExist)
-            {
-                myUserRaport = await _context.UserRaports.SingleAsync(uR => uR.RaportId == raport.RaportId && uR.UserId == userId);
-            }
-            else
-            {
-                myUserRaport = new UserRaport()
-                {
-                    RaportId = raport.RaportId,
-                    UserId = userId,
-                    UserAllHours = hours
-                };
-                await _context.UserRaports.AddAsync(myUserRaport);
-                await _context.SaveChangesAsync();
-            }
-            UserRaportRecord? userRaportRecord;
-            bool userRaportRecordExist = await _context.UserRaportRecords.AnyAsync(
+
+            //UserRaport? myUserRaport = await _context.UserRaports.FirstOrDefaultAsync(uR => uR.RaportId == raport.RaportId && uR.UserId == userId);
+            
+            //if (myUserRaport is null)
+            //{
+            //    myUserRaport = new UserRaport()
+            //    {
+            //        RaportId = raport.RaportId,
+            //        UserId = userId,
+            //        UserAllHours = hours
+            //    };
+            //    await _context.UserRaports.AddAsync(myUserRaport);
+            //    await _context.SaveChangesAsync();
+            //}
+
+            UserRaportRecord? userRaportRecord = await _context.UserRaportRecords.FirstOrDefaultAsync(
                     record => record.InboxItemId == inboxItemId);
 
-            if (userRaportRecordExist)
+            if (userRaportRecord is not null)
             {
-                userRaportRecord = await _context.UserRaportRecords.SingleAsync(
-                    record => record.InboxItemId == inboxItemId);
-
                 userRaportRecord.InboxItemId = inboxItemId;
                 userRaportRecord.TaskHours = hours;
             }
             else
             {
-                myUserRaport.UserRaportRecords = new List<UserRaportRecord>()
+                raport.UserRaportRecords = new List<UserRaportRecord>()
                 {
                     new UserRaportRecord()
                     {
                         InboxItemId = inboxItemId,
                         TaskHours = hours,
-                        UserRaportId =  myUserRaport.RaportId
+                        RaportId =  raport.RaportId
                     }
                 };
 
             }
             await _context.SaveChangesAsync();
 
-            myUserRaport.UserAllHours = await _context.UserRaportRecords
-                .Where(i => i.UserRaportId == myUserRaport.UserRaportId)
-                .SumAsync(h => h.TaskHours);
+            //myUserRaport.UserAllHours = await _context.UserRaportRecords
+            //    .Where(i => i.UserRaportId == myUserRaport.UserRaportId)
+            //    .SumAsync(h => h.TaskHours);
+
+            //await _context.SaveChangesAsync();
+
+            //raport.TotalHours = await _context.UserRaports
+            //    .Where(d => d.RaportId == raport.RaportId)
+            //    .SumAsync(h => h.UserAllHours);
 
             await _context.SaveChangesAsync();
-
-            raport.TotalHours = await _context.UserRaports
-                .Where(d => d.RaportId == raport.RaportId)
-                .SumAsync(h => h.UserAllHours);
-
-            await _context.SaveChangesAsync();
-            return myUserRaport;
+            return raport;
         }
 
-        public async Task<bool> DeleteRaport(int userId,double hours, int inboxItemId)
+        public async Task<bool> DeleteRaport(Guid userId,double hours, Guid inboxItemId, DateTime entryDate)
         {
-            string currentRaport = DateTime.Now.ToString("yyyy MM");
-            Raport raport = await _context.Raports.SingleAsync(d => d.Created == currentRaport);
+            Raport? raport = await _context.Raports.FirstOrDefaultAsync(d => d.Year == entryDate.Year && d.Month == entryDate.Month);
 
-            UserRaport userRaport = await _context.UserRaports.SingleAsync(r => r.RaportId == raport.RaportId && r.UserId == userId);
+            if (raport is null) throw new BadHttpRequestException("Raport not found");
 
-            UserRaportRecord recordToDelete = await _context.UserRaportRecords.SingleAsync(r => r.InboxItemId == inboxItemId);
-            if (recordToDelete == null) throw new BadHttpRequestException("Bad request");
+            UserRaportRecord? recordToDelete = await _context.UserRaportRecords.FirstOrDefaultAsync(r => r.InboxItemId == inboxItemId);
+
+            if (recordToDelete is null) throw new BadHttpRequestException("Record not found");
+
             if (hours == 0)
             {
                 _context.UserRaportRecords.Remove(recordToDelete);
@@ -151,15 +143,15 @@ namespace Aplikacja.Repositories.RaportRepository
                 recordToDelete.TaskHours = hours;
                 await _context.SaveChangesAsync();
             }
-            userRaport.UserAllHours = await _context.UserRaportRecords
-                .Where(i => i.UserRaportId == userRaport.UserRaportId)
-                .SumAsync(h => h.TaskHours);
+            //userRaport.UserAllHours = await _context.UserRaportRecords
+            //    .Where(i => i.UserRaportId == userRaport.UserRaportId)
+            //    .SumAsync(h => h.TaskHours);
 
-            await _context.SaveChangesAsync();
+            //await _context.SaveChangesAsync();
 
-            raport.TotalHours = await _context.UserRaports
-                .Where(d => d.RaportId == raport.RaportId)
-                .SumAsync(h => h.UserAllHours);
+            //raport.TotalHours = await _context.UserRaports
+            //    .Where(d => d.RaportId == raport.RaportId)
+            //    .SumAsync(h => h.UserAllHours);
 
             await _context.SaveChangesAsync();
 

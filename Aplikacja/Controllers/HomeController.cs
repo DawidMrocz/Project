@@ -29,11 +29,11 @@ namespace Aplikacja.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<Job>> CreateOrEdit(int id = 0)
+        public async Task<ActionResult<Job>> CreateOrEdit(int id)
         {
-            if (id == 0)
-                return View(new Job());
-            else
+           // if (id == 0)
+                //return View(new Job());
+            //else
                 return View(await _jobRepository.GetJob(id));
         }
 
@@ -67,7 +67,7 @@ namespace Aplikacja.Controllers
         public async Task<ActionResult<bool>> AddToInbox(int jobId)
         {
             
-            await _jobRepository.AddToInbox(jobId, int.Parse(User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value));
+            await _jobRepository.AddToInbox(jobId, Guid.Parse(User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value));
           
             return RedirectToAction("Index", "Home");
         }

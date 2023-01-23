@@ -6,10 +6,10 @@ namespace Aplikacja.Repositories.RaportRepository
     public interface IRaportRepository
     {
 
-        public Task<RaportDTO> GetRaport(int raportId);
+        public Task<RaportDTO> GetRaport(Guid raportId);
         public Task<List<RaportDTO>> GetRaports();
-        public Task<UserRaport> CreateRaport(int userId, double hours,int inboxItemId);
-        public Task<bool> DeleteRaport(int userId, double hours, int inboxItemId);
+        public Task<Raport> CreateRaport(Guid userId, double hours,Guid inboxItemId,DateTime entryDate);
+        public Task<bool> DeleteRaport(Guid userId, double hours, Guid inboxItemId, DateTime entryDate);
 
     }
 }

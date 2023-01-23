@@ -5,7 +5,6 @@ using Aplikacja.Repositories.CatRepository;
 using Aplikacja.Repositories.JobRepository;
 using Aplikacja.Repositories.RaportRepository;
 using Aplikacja.Repositories.UserRepository;
-using Aplikacja.Settings;
 using FluentValidation;
 using InboxMicroservice.Repositories;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -14,10 +13,6 @@ using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
 var builder = WebApplication.CreateBuilder(args);
-
-var authenticationSettings = new AuthenticationSettings();
-builder.Services.AddSingleton(authenticationSettings);
-builder.Configuration.GetSection("Authentication").Bind(authenticationSettings);
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(option =>
@@ -45,12 +40,6 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.EnableDetailedErrors();
     options.EnableSensitiveDataLogging();
 });
-
-//builder.Services.AddMvc()
-//     .AddNewtonsoftJson(
-//          options => {
-//              options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
-//          });
 
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 builder.Services.AddHttpContextAccessor();

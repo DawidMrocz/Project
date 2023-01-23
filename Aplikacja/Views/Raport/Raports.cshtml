@@ -7,7 +7,8 @@
     @foreach (var obj in Model)
     {
         <div class="line">
-            <div class="jobId_content"> @obj.Created</div>
+            <div class="jobId_content"> @obj.Year</div>
+            <div class="jobId_content"> @obj.Month</div>
             <div class="jobId_content"> @obj.RaportId</div>
             <a asp-action="Raport" asp-controller="Raport" asp-route-id="@obj.RaportId">See raport</a>
         </div>

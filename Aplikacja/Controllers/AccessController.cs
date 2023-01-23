@@ -49,6 +49,7 @@ namespace Aplikacja.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> Register(RegisterDto command)
         {
+            if (!ModelState.IsValid) throw new BadHttpRequestException("Bad data");
             try
             {
                 User newUser = await _userRepository.CreateUser(command);

@@ -32,7 +32,6 @@ namespace Aplikacja.Models
                     Client = "TOYOTA",
                     ProjectName = "sap text",
                     Status = "2D",
-                    Received = "15.22.2022",
                 },
                 new Job()
                 {
@@ -48,8 +47,6 @@ namespace Aplikacja.Models
                     Client = "TOYOTA",
                     ProjectName = "sap text",
                     Status = "2D",
-                    Received = "20.11.2022",
-                    DueDate = "25.11.2022"
                 },
                 new Job()
                 {
@@ -65,23 +62,22 @@ namespace Aplikacja.Models
                     Client = "TOYOTA",
                     ProjectName = "sap text",
                     Status = "2D",
-                    Received = "20.11.2022",
                 }
-            ); ;
+            );
             modelBuilder.Entity<User>().HasData(
                 new User
                 {
-                    UserId=1,
+                    UserId= Guid.NewGuid(),
                     Name = "Dawid",
                     PasswordHash = "zxcasdqwe",
                     Email = "dawid@tlen.pl",
                     CCtr = "RS8531",
                     ActTyp = "L8531",
-                    Role = "Admin"
+                    Role = "Admin",
                 },
                 new User
                 {
-                    UserId = 2,
+                    UserId = Guid.NewGuid(),
                     Name = "Agata",
                     PasswordHash = "zxcasdqwe",
                     Email = "agata@tlen.pl",
@@ -90,24 +86,28 @@ namespace Aplikacja.Models
                     Role = "Manager",
                 }
             );
-            //modelBuilder.Entity<Raport>().HasData(
-            //    new Raport
-            //    {
-            //        Id = 1,
-            //        TotalHours = 0
-            //    },
-            //    new Raport
-            //    {
-            //        Id = 2,
-            //        TotalHours = 0
-            //    },
-            //    new Raport
-            //    {
-            //        Id = 3,
-            //        TotalHours = 0
-            //    }
-            //);
-
+            modelBuilder.Entity<User>().HasData(
+                new User
+                {
+                    UserId = Guid.NewGuid(),
+                    Name = "Dawid",
+                    PasswordHash = "zxcasdqwe",
+                    Email = "dawid@tlen.pl",
+                    CCtr = "RS8531",
+                    ActTyp = "L8531",
+                    Role = "Admin",
+                },
+                new User
+                {
+                    UserId = Guid.NewGuid(),
+                    Name = "Agata",
+                    PasswordHash = "zxcasdqwe",
+                    Email = "agata@tlen.pl",
+                    CCtr = "RS8531",
+                    ActTyp = "L8531",
+                    Role = "Manager",
+                }
+            );
         }
     }
 }

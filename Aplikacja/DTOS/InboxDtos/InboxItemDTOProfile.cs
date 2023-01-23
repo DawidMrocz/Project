@@ -15,7 +15,12 @@ namespace Aplikacja.DTOS.InboxDtos
                 .ForMember(m => m.Finished, c => c.MapFrom(s => s.Job.Finished))
                 .ForMember(m => m.Link, c => c.MapFrom(s => s.Job.Link))
                 .ForMember(m => m.JobDescription, c => c.MapFrom(s => s.Job.JobDescription))
-                .ForMember(m => m.Status, c => c.MapFrom(s => s.Job.Status));
+                .ForMember(m => m.Status, c => c.MapFrom(s => s.Job.Status))
+                .ForMember(m => m.UserId, c => c.MapFrom(s => s.User.UserId))
+                .ForMember(m => m.Name, c => c.MapFrom(s => s.User.Name))
+                .ForMember(m => m.Email, c => c.MapFrom(s => s.User.Email))
+                .ForMember(m => m.Role, c => c.MapFrom(s => s.User.Role))
+                .ForMember(m => m.Photo, c => c.MapFrom(s => s.User.Photo));
         }
     }
 }

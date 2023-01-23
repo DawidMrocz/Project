@@ -3,14 +3,12 @@ using Aplikacja.Entities.InboxModel;
 using Aplikacja.Entities.UserModel;
 using Aplikacja.Extensions;
 using Aplikacja.Models;
-using Aplikacja.Settings;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using MailKit.Net.Smtp;
 using MailKit.Security;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
@@ -25,7 +23,6 @@ namespace Aplikacja.Repositories.UserRepository
         private readonly IMapper _mapper;
         private readonly IPasswordHasher<User> _passwordHasher;
         private readonly IDistributedCache _cache;
-        private readonly AuthenticationSettings _authenticationSettings;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
         public UserRepository(
@@ -33,7 +30,6 @@ namespace Aplikacja.Repositories.UserRepository
             IMapper mapper,
             IPasswordHasher<User> passwordHasher,
             IDistributedCache cache,
-            AuthenticationSettings authenticationSettings,
             IHttpContextAccessor httpContextAccessor
             )
         {
@@ -41,7 +37,6 @@ namespace Aplikacja.Repositories.UserRepository
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _passwordHasher = passwordHasher ?? throw new ArgumentNullException(nameof(passwordHasher));
             _cache = cache ?? throw new ArgumentNullException(nameof(cache));
-            _authenticationSettings = authenticationSettings ?? throw new ArgumentNullException(nameof(authenticationSettings));
             _httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
         }
 
@@ -56,7 +51,7 @@ namespace Aplikacja.Repositories.UserRepository
             return users;
         }
 
-        public async Task<UserDto> GetProfile(int userId)
+        public async Task<UserDto> GetProfile(Guid userId)
         {
             UserDto? profile = await _cache.GetRecordAsync<UserDto>($"Profile_{userId}");
             if (profile is null)
@@ -69,18 +64,16 @@ namespace Aplikacja.Repositories.UserRepository
         }
         public async Task<User> CreateUser(RegisterDto command)
         {
-
             User newUser = new User()
             {
                 Name = command.Name,
                 Email = command.Email,
                 ActTyp = command.ActTyp,
-                CCtr = command.CCtr,
+                CCtr = command.CCtr,      
                 Role = "User",
-                Inbox = new Inbox()
             };
 
-            if (command.ProfilePhoto.Length > 0)
+            if (command.ProfilePhoto is not null)
             {
                 using (var memoryStream = new MemoryStream())
                 {
@@ -88,8 +81,7 @@ namespace Aplikacja.Repositories.UserRepository
                     {
                         await command.ProfilePhoto.CopyToAsync(memoryStream);
                         newUser.Photo = memoryStream.ToArray();
-                    }
-                   
+                    }   
                 }
             }
 
@@ -128,7 +120,7 @@ namespace Aplikacja.Repositories.UserRepository
             return true;
         }
 
-        public async Task<bool> DeleteUser(int userId)
+        public async Task<bool> DeleteUser(Guid userId)
         {
             var resultQuantity = await _context.Users.Where(u => u.UserId == userId).ExecuteDeleteAsync();
             if (resultQuantity != 1) throw new BadHttpRequestException("Bad");
@@ -136,16 +128,27 @@ namespace Aplikacja.Repositories.UserRepository
             return true;
         }
 
-        public async Task<User> UpdateUser(UpdateDto command,int userId)
+        public async Task<User> UpdateUser(UpdateDto command,Guid userId)
         {
             var currentUser = await _context.Users.SingleAsync(r => r.UserId == userId);
-            if (currentUser is null) throw new BadHttpRequestException("Bad");
-            currentUser.Name = command.Name;
-            currentUser.Email = command.Email;
-            currentUser.CCtr = command.CCtr;
-            currentUser.ActTyp = command.ActTyp;
-            //currentUser.Photo = command.Photo;
 
+            if (currentUser is null) throw new BadHttpRequestException("Bad");
+
+            currentUser.Name = command.Name is not null ? command.Name : currentUser.Name;
+            currentUser.CCtr = command.CCtr is not null ? command.CCtr : currentUser.CCtr;
+            currentUser.ActTyp = command.ActTyp is not null ? command.ActTyp : currentUser.ActTyp;
+
+            if (command.ProfilePhoto is not null)
+            {
+                using (var memoryStream = new MemoryStream())
+                {
+                    if (memoryStream.Length < 2097152)
+                    {
+                        await command.ProfilePhoto.CopyToAsync(memoryStream);
+                        currentUser.Photo = memoryStream.ToArray();
+                    }
+                }
+            }
             await _cache.DeleteRecordAsync<User>($"Profile_{userId}");
             _context.SaveChanges();
             return currentUser;
@@ -177,7 +180,7 @@ namespace Aplikacja.Repositories.UserRepository
             return true;
         }
 
-        public async Task<bool> ChangePassword(int userId,string oldPassword,string newPassword, string newPasswordRepeat)
+        public async Task<bool> ChangePassword(Guid userId,string oldPassword,string newPassword, string newPasswordRepeat)
         {
             if (newPassword != newPasswordRepeat) throw new BadHttpRequestException("New passwords are not the same");
 
@@ -195,7 +198,7 @@ namespace Aplikacja.Repositories.UserRepository
             return true;
         }
 
-        public async Task<bool> ChangeRole(int userId,string role)
+        public async Task<bool> ChangeRole(Guid userId,string role)
         {
 
             var user = await _context.Users.FirstOrDefaultAsync(u => u.UserId == userId);
